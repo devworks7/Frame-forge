@@ -1,0 +1,6 @@
+{
+  "name": "Frame Forge",
+  "description": "An elite post-production portfolio, service catalog, pricing, and project request management platform for Frame Forge studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/admin/upload", "destination": "/api/upload" },
+    { "source": "/api/admin/(.*)", "destination": "/api/admin" },
+    { "source": "/api/db/(.*)", "destination": "/api/db" },
+    { "source": "/api/health", "destination": "/api/system" },
+    { "source": "/api/db-status", "destination": "/api/system" },
+    { "source": "/api/stream-video/(.*)", "destination": "/api/system" },
+    { "source": "/api/documents/(.*)", "destination": "/api/system" },
+    { "source": "/api/notify-email", "destination": "/api/notify" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
