@@ -66,7 +66,7 @@ export default function ServicesSection() {
             Creative Capabilities
           </h2>
           <p className="font-sans font-light text-white/70 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.7] tracking-wide">
-            From offline cuts to 3D simulation, we design every stage of post-production. Click any service to explore details.
+            Premium websites, cinematic editing, motion graphics, and AI solutions designed for modern businesses. Click any service below to explore the details.
           </p>
         </div>
 
