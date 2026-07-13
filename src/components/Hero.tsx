@@ -82,7 +82,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
       <div
         id="hero-interactive-indicator"
         onClick={() => scrollToSection("portfolio")}
-        className="absolute bottom-12 flex flex-col items-center space-y-3 cursor-pointer group"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-3 cursor-pointer group z-20"
       >
         <span className="font-sans font-bold text-[8px] tracking-[0.3em] text-zinc-500 group-hover:text-white uppercase transition-colors duration-300">
           Scroll to explore
