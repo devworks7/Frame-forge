@@ -1541,6 +1541,16 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   </div>
 
                   <div className="space-y-2">
+                    <label className="block font-bold">About Quote</label>
+                    <textarea
+                      rows={3}
+                      value={content.aboutQuote || ""}
+                      onChange={(e) => setContent({ ...content, aboutQuote: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/10 text-white focus:outline-none focus:border-cyan-500/40"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
                     <label className="block font-bold">About Mission Body *</label>
                     <textarea
                       required

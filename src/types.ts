@@ -92,6 +92,7 @@ export interface SectionContent {
   heroTitle: string;
   heroSubtitle: string;
   aboutTitle: string;
+  aboutQuote?: string;
   aboutText: string;
   aboutStats: { label: string; value: string }[];
   contactEmail: string;

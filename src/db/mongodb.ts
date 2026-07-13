@@ -157,6 +157,7 @@ const SectionContentSchema = new mongoose.Schema({
   heroTitle: { type: String, required: true },
   heroSubtitle: { type: String, required: true },
   aboutTitle: { type: String, required: true },
+  aboutQuote: { type: String, default: "" },
   aboutText: { type: String, required: true },
   aboutStats: [{
     label: { type: String, required: true },

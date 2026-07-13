@@ -15,7 +15,7 @@ import AdminPanel from "./components/AdminPanel";
 
 import { SectionContent } from "./types";
 import {
-  seedDatabaseIfEmpty,
+  checkInitialSeed,
   getSectionContent,
   incrementAnalytics,
   logActivity
@@ -42,7 +42,7 @@ export default function App() {
   // Initialize and Seed Firestore on Mount
   useEffect(() => {
     async function init() {
-      await seedDatabaseIfEmpty();
+      await checkInitialSeed();
       const c = await getSectionContent();
       setSiteContent(c);
 

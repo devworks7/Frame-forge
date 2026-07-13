@@ -38,16 +38,15 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           <h1
             id="hero-headline"
             className="font-serif text-[42px] sm:text-[56px] md:text-[72px] lg:text-[100px] text-white font-normal leading-[0.95] tracking-[-0.04em] animate-fade-rise"
-          >
-            We forge <span className="block sm:inline">experiences.</span>
-          </h1>
+            dangerouslySetInnerHTML={{ __html: content?.heroTitle || 'We forge <span className="block sm:inline">experiences.</span>' }}
+          />
           
           {/* Beautiful supporting text */}
           <p
             id="hero-subheading"
             className="max-w-2xl mx-auto font-sans font-light text-[15px] sm:text-[17px] md:text-[19px] text-white/70 leading-[1.7] tracking-wide animate-opacity-fade"
           >
-            Premium websites, cinematic edits, and AI-powered digital experiences designed to build trust and attract more customers.
+            {content?.heroSubtitle || "Premium websites, cinematic edits, and AI-powered digital experiences designed to build trust and attract more customers."}
           </p>
         </div>
 
