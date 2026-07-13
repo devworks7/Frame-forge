@@ -4,8 +4,18 @@ export default function CustomCursor() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
+  const [isTouch, setIsTouch] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    const hasNoHover = window.matchMedia("(hover: none)").matches;
+    const hasTouchEvents = "ontouchstart" in window;
+    const hasTouchPoints = navigator.maxTouchPoints > 0;
+    return isCoarse || hasNoHover || (hasTouchEvents && hasTouchPoints);
+  });
 
   useEffect(() => {
+    if (isTouch) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
       setIsHidden(false);
@@ -46,9 +56,9 @@ export default function CustomCursor() {
       document.removeEventListener("mouseenter", handleMouseEnter);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, []);
+  }, [isTouch]);
 
-  if (isHidden) return null;
+  if (isTouch || isHidden) return null;
 
   return (
     <>

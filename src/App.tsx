@@ -31,6 +31,7 @@ export default function App() {
   // Loading Screen Counter
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [isVideoPreloaded, setIsVideoPreloaded] = useState(false);
 
   // Scroll to Top state
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -51,6 +52,35 @@ export default function App() {
       if (!localStorage.getItem("ff_cookies_accepted")) {
         setShowCookieConsent(true);
       }
+
+      // Preload critical background video
+      const preloadVideo = () => {
+        return new Promise<void>((resolve) => {
+          const video = document.createElement("video");
+          video.src = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4";
+          video.preload = "auto";
+          video.muted = true;
+          video.playsInline = true;
+
+          const done = () => {
+            video.removeEventListener("canplaythrough", done);
+            video.removeEventListener("error", done);
+            setIsVideoPreloaded(true);
+            resolve();
+          };
+
+          video.addEventListener("canplaythrough", done);
+          video.addEventListener("error", done);
+
+          if (video.readyState >= 3) {
+            done();
+          }
+
+          // Safety timeout of 2 seconds so the loader never hangs
+          setTimeout(done, 2000);
+        });
+      };
+      preloadVideo();
 
       // Restore active admin sessions on mount
       const adminToken = localStorage.getItem("ff_admin_token");
@@ -99,10 +129,15 @@ export default function App() {
         });
       }, 80);
       return () => clearInterval(interval);
-    } else {
-      setTimeout(() => setIsLoading(false), 500);
     }
   }, [loadProgress]);
+
+  // Handle transition immediately when loader is complete and critical assets/data are ready
+  useEffect(() => {
+    if (loadProgress === 100 && siteContent !== null && isVideoPreloaded) {
+      setIsLoading(false);
+    }
+  }, [loadProgress, siteContent, isVideoPreloaded]);
 
   // Track scroll position for scroll-to-top button
   useEffect(() => {
