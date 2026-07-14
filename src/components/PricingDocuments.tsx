@@ -40,10 +40,10 @@ export default function PricingDocuments() {
         <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
           STUDIO RATES
         </span>
-        <h1 className="font-serif text-[34px] sm:text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+        <h1 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
           Bespoke Packages
         </h1>
-        <p className="font-sans font-light text-white/70 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.7] max-w-lg mx-auto">
+        <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto">
           Calibrated rates for elite video editing, motion design, and CGI.
         </p>
       </div>

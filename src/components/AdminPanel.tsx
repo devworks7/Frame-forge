@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   ShieldAlert, Lock, Eye, Key, LayoutDashboard, FileSpreadsheet, Film, FileText, Settings,
-  Activity, Users, Mail, Play, CheckCircle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes
+  Activity, Users, Mail, Play, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes
 } from "lucide-react";
 import { PortfolioItem, PDFDoc, ClientRequest, FAQItem, Testimonial, SectionContent, Analytics, RecentActivity, ServiceItem } from "../types";
 import Logo from "./Logo";
@@ -47,8 +47,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   // Inline feedback states
   const [loginError, setLoginError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [contentSaveSuccess, setContentSaveSuccess] = useState(false);
-  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
+    const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccessMsg, setUploadSuccessMsg] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
@@ -87,6 +86,10 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   const [uploadStats, setUploadStats] = useState({ loaded: 0, total: 0, speed: 0, eta: 0 });
 
   // Database Connection Status
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
+
   const [dbStatus, setDbStatus] = useState<{ connected: boolean; mode: string; error: string | null }>({
     connected: false,
     mode: "checking",
@@ -286,9 +289,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       setExportError("Export failed. Network error.");
     }
   };
-
-  // Secure local file uploader on Express backend
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Secure direct-to-Cloudinary file uploader
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
     
@@ -298,49 +300,66 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
     setUploadProgress(0);
     setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const startTime = Date.now();
-    let lastLoaded = 0;
-    let lastTime = startTime;
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/admin/upload", true);
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = Math.round((event.loaded / event.total) * 100);
-        setUploadProgress(percentComplete);
-
-        const currentTime = Date.now();
-        const timeDiff = (currentTime - lastTime) / 1000;
-        
-        if (timeDiff > 0.5 || event.loaded === event.total) {
-          const bytesDiff = event.loaded - lastLoaded;
-          const speedBps = bytesDiff / timeDiff;
-          const bytesRemaining = event.total - event.loaded;
-          const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
-          
-          setUploadStats({
-            loaded: event.loaded,
-            total: event.total,
-            speed: speedBps,
-            eta: etaSeconds
-          });
-
-          lastLoaded = event.loaded;
-          lastTime = currentTime;
+    try {
+      // 1. Get signed upload parameters from our backend
+      const signRes = await fetch("/api/cloudinary/sign", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
         }
+      });
+      const signData = await signRes.json();
+      
+      if (!signData.success) {
+        throw new Error(signData.error || "Failed to get upload signature");
       }
-    };
 
-    xhr.onload = async () => {
-      if (xhr.status === 200) {
-        try {
-          const d = JSON.parse(xhr.responseText);
-          if (d.success) {
+      // 2. Prepare FormData for Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", signData.apiKey);
+      formData.append("timestamp", signData.timestamp);
+      formData.append("signature", signData.signature);
+      formData.append("folder", signData.folder);
+
+      const startTime = Date.now();
+      let lastLoaded = 0;
+      let lastTime = startTime;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`, true);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+
+          const currentTime = Date.now();
+          const timeDiff = (currentTime - lastTime) / 1000;
+          
+          if (timeDiff > 0.5 || event.loaded === event.total) {
+            const bytesDiff = event.loaded - lastLoaded;
+            const speedBps = bytesDiff / timeDiff;
+            const bytesRemaining = event.total - event.loaded;
+            const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
+            
+            setUploadStats({
+              loaded: event.loaded,
+              total: event.total,
+              speed: speedBps,
+              eta: etaSeconds
+            });
+
+            lastLoaded = event.loaded;
+            lastTime = currentTime;
+          }
+        }
+      };
+
+      xhr.onload = async () => {
+        if (xhr.status === 200) {
+          try {
+            const d = JSON.parse(xhr.responseText);
             setUploadSuccessMsg("Upload complete. Verifying processing...");
             
             // Basic HEAD request to check if reachable
@@ -349,38 +368,43 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                if (!checkRes.ok && checkRes.status !== 405) {
                  throw new Error("URL not reachable");
                }
-               setUploadedFileName(d.originalName);
+               setUploadedFileName(file.name);
                setUploadedFileUrl(d.secure_url);
-               setUploadSuccessMsg(`File uploaded successfully: ${d.originalName}`);
-               if (d.thumbnail) {
-                 setEditingProject(prev => prev ? { ...prev, thumbnail: d.thumbnail, duration: d.duration ? String(Math.round(d.duration)) + "s" : prev.duration } : null);
+               setUploadSuccessMsg(`File uploaded successfully: ${file.name}`);
+               
+               const isVideo = file.type.startsWith("video/");
+               const thumbnailUrl = isVideo && d.secure_url ? d.secure_url.replace(/\.[^/.]+$/, ".jpg") : d.secure_url;
+
+               if (thumbnailUrl) {
+                 setEditingProject(prev => prev ? { ...prev, thumbnail: thumbnailUrl, duration: d.duration ? String(Math.round(d.duration)) + "s" : prev.duration } : null);
                }
             } catch (err) {
                setUploadError("Processing failed or file not accessible.");
             }
-          } else {
-            setUploadError(d.error || "File upload failed.");
+          } catch (err) {
+             setUploadError("Invalid response from Cloudinary.");
           }
-        } catch (err) {
-           setUploadError("Invalid response from server.");
+        } else {
+          setUploadError("Upload failed. Limit: 500MB, allowed types: MP4, MOV, WebM, PDF.");
         }
-      } else {
-        setUploadError("Upload failed. Limit: 500MB, allowed types: MP4, MOV, WebM, PDF.");
-      }
-      setIsUploading(false);
-      setTimeout(() => {
+        setIsUploading(false);
+        setTimeout(() => {
+          setUploadProgress(0);
+          setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
+        }, 3000);
+      };
+
+      xhr.onerror = () => {
+        setUploadError("Network error during upload.");
+        setIsUploading(false);
         setUploadProgress(0);
-        setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
-      }, 3000);
-    };
+      };
 
-    xhr.onerror = () => {
-      setUploadError("Network error during upload.");
+      xhr.send(formData);
+    } catch (err: any) {
+      setUploadError(err.message || "Failed to initiate upload.");
       setIsUploading(false);
-      setUploadProgress(0);
-    };
-
-    xhr.send(formData);
+    }
   };
 
   // Portfolio items operations
@@ -409,11 +433,22 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       order: editingProject.order || portfolio.length + 1,
     };
 
-    await savePortfolioItem(finalItem);
-    setEditingProject(null);
-    setUploadedFileUrl("");
-    setUploadedFileName("");
-    loadDashboardData();
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await savePortfolioItem(finalItem);
+      await loadDashboardData();
+      setEditingProject(null);
+      setUploadedFileUrl("");
+      setUploadedFileName("");
+      setSaveSuccessMsg("Project saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save project.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteProject = async (id: string) => {
@@ -444,22 +479,39 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
     e.preventDefault();
     if (!editingPdf) return;
 
+    const finalFileUrl = uploadedFileUrl || editingPdf.fileUrl;
+    if (!finalFileUrl || finalFileUrl.startsWith("blob:") || finalFileUrl.startsWith("file:") || finalFileUrl.includes("dummy.pdf")) {
+      alert("Please upload a valid PDF document before committing.");
+      return;
+    }
+
     const finalItem: PDFDoc = {
       id: editingPdf.id || "pdf-" + Date.now(),
       title: editingPdf.title || "Untitled Deck",
       category: (editingPdf.category as any) || "Package",
       description: editingPdf.description || "",
-      fileUrl: uploadedFileUrl || editingPdf.fileUrl || "/api/documents/brochure.pdf",
-      fileName: uploadedFileName || editingPdf.fileName || "brochure.pdf",
+      fileUrl: finalFileUrl,
+      fileName: uploadedFileName || editingPdf.fileName || "document.pdf",
       downloadsAllowed: editingPdf.downloadsAllowed ?? true,
       order: editingPdf.order || pdfs.length + 1,
     };
 
-    await savePDFDocument(finalItem);
-    setEditingPdf(null);
-    setUploadedFileUrl("");
-    setUploadedFileName("");
-    loadDashboardData();
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await savePDFDocument(finalItem);
+      await loadDashboardData();
+      setEditingPdf(null);
+      setUploadedFileUrl("");
+      setUploadedFileName("");
+      setSaveSuccessMsg("PDF Document saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save pdf document.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeletePdf = async (id: string) => {
@@ -473,10 +525,22 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   const handleSaveContent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content) return;
-    await saveSectionContent(content);
-    setContentSaveSuccess(true);
-    setTimeout(() => setContentSaveSuccess(false), 3500);
-    loadDashboardData();
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await saveSectionContent(content);
+      await loadDashboardData();
+      setContentSaveSuccess(true);
+      setTimeout(() => setContentSaveSuccess(false), 3500);
+      setSaveSuccessMsg("Content saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save content.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // FAQ Operations
@@ -489,9 +553,21 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       answer: editingFaq.answer || "",
       order: editingFaq.order || faqs.length + 1,
     };
-    await saveFAQ(finalItem);
-    setEditingFaq(null);
-    loadDashboardData();
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await saveFAQ(finalItem);
+      await loadDashboardData();
+      setEditingFaq(null);
+      setSaveSuccessMsg("FAQ saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save faq.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteFaq = async (id: string) => {
@@ -515,9 +591,21 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       avatar: editingTestimonial.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
       order: editingTestimonial.order || testimonials.length + 1,
     };
-    await saveTestimonial(finalItem);
-    setEditingTestimonial(null);
-    loadDashboardData();
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await saveTestimonial(finalItem);
+      await loadDashboardData();
+      setEditingTestimonial(null);
+      setSaveSuccessMsg("Testimonial saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save testimonial.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteTestimonial = async (id: string) => {
@@ -540,9 +628,21 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       iconName: editingService.iconName || "Film",
       order: editingService.order || services.length + 1,
     };
-    await saveServiceItem(finalItem);
-    setEditingService(null);
-    loadDashboardData();
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await saveServiceItem(finalItem);
+      await loadDashboardData();
+      setEditingService(null);
+      setSaveSuccessMsg("Service saved successfully.");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
+    } catch (err: any) {
+      setSaveError(err.message || "Failed to save service.");
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteService = async (id: string) => {
@@ -604,13 +704,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <h2 className="font-sans font-black text-xl text-white tracking-widest uppercase">
                 ENGINE ROOM LOGIN
               </h2>
-              <p className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">
+              <p className="font-mono text-[9px] text-white/50 uppercase tracking-wider">
                 FRAME FORGE AGENCY ADMINISTRATOR PORTAL
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6 text-xs text-gray-300">
+          <form onSubmit={handleLogin} className="space-y-6 text-xs text-white/70">
             {loginError && (
               <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-mono text-[11px] leading-relaxed">
                 ERROR: {loginError}
@@ -646,7 +746,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 type="button"
                 onClick={onClose}
-                className="font-mono text-[10px] text-gray-500 hover:text-white uppercase transition-colors cursor-pointer"
+                className="font-mono text-[10px] text-white/50 hover:text-white uppercase transition-colors cursor-pointer"
               >
                 // RETURN_TO_WEBSITE
               </button>
@@ -680,12 +780,12 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             <h3 className="font-sans font-black text-lg text-white uppercase tracking-wider">
               UPDATE SECURITY CREDENTIALS
             </h3>
-            <p className="font-sans text-xs text-gray-400 leading-relaxed">
+            <p className="font-sans text-xs text-white/60 leading-relaxed">
               As a security compliance mandate, you must change your default password (<code className="text-purple-400">framestrue27</code>) on your very first successful login.
             </p>
           </div>
 
-          <form onSubmit={handleChangePassword} className="space-y-4 text-xs text-gray-300">
+          <form onSubmit={handleChangePassword} className="space-y-4 text-xs text-white/70">
             {passwordError && (
               <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-mono text-[11px] leading-relaxed">
                 ERROR: {passwordError}
@@ -732,7 +832,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             <h2 className="font-sans font-black text-sm text-white uppercase tracking-wider">
               FRAME FORGE CONTROL SUITE
             </h2>
-            <p className="font-mono text-[9px] text-gray-500 uppercase">
+            <p className="font-mono text-[9px] text-white/50 uppercase">
               SECURE SESSION ROOT // STATUS: AUTHENTICATED // LATENCY: NOMINAL
             </p>
           </div>
@@ -753,7 +853,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all interactive cursor-pointer"
+            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all interactive cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -766,7 +866,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         {/* Left Side menu navigation */}
         <div className="w-56 border-r border-white/5 bg-[#0a0a0c] p-4 flex flex-col justify-between">
           <div className="space-y-6">
-            <span className="block font-mono text-[8px] text-gray-600 uppercase tracking-widest px-3">
+            <span className="block font-mono text-[8px] text-white/40 uppercase tracking-widest px-3">
               // MODULE ENGINE
             </span>
             
@@ -775,7 +875,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("metrics")}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "metrics" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "metrics" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <LayoutDashboard size={14} />
@@ -786,7 +886,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("requests")}
                 className={`w-full flex items-center justify-between px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "requests" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "requests" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <div className="flex items-center space-x-3">
@@ -804,7 +904,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("portfolio")}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "portfolio" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "portfolio" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <Film size={14} />
@@ -815,7 +915,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("pdfs")}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "pdfs" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "pdfs" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <FileText size={14} />
@@ -826,7 +926,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("content")}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "content" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "content" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <Settings size={14} />
@@ -837,7 +937,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 onClick={() => setActiveTab("services")}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
-                  activeTab === "services" ? "bg-white/5 text-cyan-400" : "text-gray-400 hover:text-white hover:bg-white/[0.01]"
+                  activeTab === "services" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
               >
                 <Boxes size={14} />
@@ -846,7 +946,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 font-mono text-[8px] text-gray-500 leading-normal space-y-1">
+          <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 font-mono text-[8px] text-white/50 leading-normal space-y-1">
             <div>CORE_VER: v1.0.4</div>
             <div>
               PERSIST_ENGINE:{" "}
@@ -870,13 +970,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                 <p>
                   The application could not reach your MongoDB Atlas database. Please verify your Atlas Cluster state, credentials, or network/IP Access List configurations.
                 </p>
-                <p className="text-[11px] text-gray-400 font-mono">
+                <p className="text-[11px] text-white/60 font-mono">
                   Error: {dbStatus.error || "Mongoose connection timeout (5000ms)"}
                 </p>
                 <div className="pt-1.5 flex flex-col space-y-1">
                   <div className="flex items-center space-x-2">
                     <span className="px-1.5 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold font-mono">ACTION REQUIRED</span>
-                    <span className="text-gray-300">
+                    <span className="text-white/70">
                       Ensure <strong>MONGODB_URI</strong> is correctly configured and MongoDB Atlas is up and accepting connections from the server.
                     </span>
                   </div>
@@ -903,14 +1003,14 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                 ].map((m, idx) => (
                   <div key={idx} className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 flex flex-col space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="p-2 rounded bg-white/[0.02] border border-white/10 text-gray-400">
+                      <span className="p-2 rounded bg-white/[0.02] border border-white/10 text-white/60">
                         {m.icon}
                       </span>
-                      <span className="font-mono text-[8px] text-gray-600 font-bold uppercase">MTRX_{idx + 1}</span>
+                      <span className="font-mono text-[8px] text-white/40 font-bold uppercase">MTRX_{idx + 1}</span>
                     </div>
                     <div className="space-y-0.5">
                       <span className={`block font-sans font-black text-2xl ${m.color} tracking-tight`}>{m.val}</span>
-                      <span className="block text-gray-400 font-sans text-[10px] font-semibold uppercase">{m.label}</span>
+                      <span className="block text-white/60 font-sans text-[10px] font-semibold uppercase">{m.label}</span>
                     </div>
                   </div>
                 ))}
@@ -925,25 +1025,25 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   </h3>
                 </div>
 
-                <div className="space-y-2.5 max-h-[300px] overflow-y-auto font-mono text-[10px] text-gray-400">
+                <div className="space-y-2.5 max-h-[300px] overflow-y-auto font-mono text-[10px] text-white/60">
                   {activities.map((act) => (
                     <div key={act.id} className="flex justify-between items-center p-2.5 rounded bg-white/[0.01] hover:bg-white/[0.02] transition-colors">
                       <div className="flex items-center space-x-3">
                         <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold ${
                           act.type === 'request' ? 'bg-purple-950 text-purple-400 border border-purple-800' :
                           act.type === 'video_view' ? 'bg-cyan-950 text-cyan-400 border border-cyan-800' :
-                          'bg-gray-900 text-gray-400'
+                          'bg-gray-900 text-white/60'
                         }`}>
                           {act.type.toUpperCase()}
                         </span>
-                        <span className="text-gray-300 font-sans">{act.description}</span>
+                        <span className="text-white/70 font-sans">{act.description}</span>
                       </div>
-                      <span className="text-[9px] text-gray-600">{new Date(act.timestamp).toLocaleTimeString()}</span>
+                      <span className="text-[9px] text-white/40">{new Date(act.timestamp).toLocaleTimeString()}</span>
                     </div>
                   ))}
 
                   {activities.length === 0 && (
-                    <p className="text-center py-6 text-gray-500">No activity logged yet.</p>
+                    <p className="text-center py-6 text-white/50">No activity logged yet.</p>
                   )}
                 </div>
               </div>
@@ -984,7 +1084,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       className={`px-3 py-1.5 rounded-full font-mono text-[9px] font-bold uppercase border whitespace-nowrap cursor-pointer ${
                         requestFilterStatus === st
                           ? "bg-white text-black border-white"
-                          : "bg-white/[0.02] border-white/10 text-gray-400 hover:text-white"
+                          : "bg-white/[0.02] border-white/10 text-white/60 hover:text-white"
                       }`}
                     >
                       {st}
@@ -1005,7 +1105,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <div className="border border-white/5 rounded-2xl bg-[#0a0a0c] overflow-hidden overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-mono text-gray-500 uppercase">
+                    <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-mono text-white/50 uppercase">
                       <th className="p-4">CLIENT & ORG</th>
                       <th className="p-4">CONTACT CHANNELS</th>
                       <th className="p-4">PROJECT TYPE & BUDGET</th>
@@ -1019,12 +1119,12 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors leading-relaxed">
                           <td className="p-4">
                             <span className="block font-sans font-bold text-white text-sm">{r.fullName}</span>
-                            <span className="block font-sans text-xs text-gray-500">{r.organizationName || "No Company"}</span>
-                            <span className="block font-mono text-[9px] text-gray-600 mt-1 uppercase">LOC: {r.city || "?"}, {r.country || "?"}</span>
+                            <span className="block font-sans text-xs text-white/50">{r.organizationName || "No Company"}</span>
+                            <span className="block font-mono text-[9px] text-white/40 mt-1 uppercase">LOC: {r.city || "?"}, {r.country || "?"}</span>
                           </td>
                           <td className="p-4">
                             <span className="block text-cyan-400">{r.email}</span>
-                            <span className="block text-gray-500">{r.phoneNumber || "No Phone"}</span>
+                            <span className="block text-white/50">{r.phoneNumber || "No Phone"}</span>
                           </td>
                           <td className="p-4">
                             <span className="block font-sans font-semibold text-white uppercase">{r.projectType}</span>
@@ -1056,7 +1156,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                                 className={`p-2 rounded cursor-pointer transition-colors ${
                                   expandedRequestId === r.id
                                     ? "bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]"
-                                    : "bg-white/5 hover:bg-white/10 text-gray-300"
+                                    : "bg-white/5 hover:bg-white/10 text-white/70"
                                 }`}
                                 title="View full specs"
                               >
@@ -1075,23 +1175,23 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         </tr>
                         {expandedRequestId === r.id && (
                           <tr className="bg-white/[0.02] border-b border-white/5 animate-fade-in">
-                            <td colSpan={5} className="p-6 text-xs text-gray-400 space-y-4 font-sans">
+                            <td colSpan={5} className="p-6 text-xs text-white/60 space-y-4 font-sans">
                               <div className="space-y-1">
                                 <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Project Specification details</span>
-                                <p className="text-gray-200 whitespace-pre-wrap font-sans text-xs bg-[#030304] p-4 rounded-xl border border-white/5 leading-relaxed shadow-inner">
+                                <p className="text-white/90 whitespace-pre-wrap font-sans text-xs bg-[#030304] p-4 rounded-xl border border-white/5 leading-relaxed shadow-inner">
                                   {r.description}
                                 </p>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1 border-t border-white/5 mt-3">
                                 <div className="space-y-1">
                                   <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Reference Links</span>
-                                  <div className="text-gray-300 break-all font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
+                                  <div className="text-white/70 break-all font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
                                     {r.referenceLinks || "No reference links supplied."}
                                   </div>
                                 </div>
                                 <div className="space-y-1">
                                   <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Uploaded Specification Document</span>
-                                  <div className="text-gray-300 block font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
+                                  <div className="text-white/70 block font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
                                     {r.fileName ? (
                                       <div className="flex items-center space-x-2">
                                         <FileText size={12} className="text-cyan-400" />
@@ -1121,7 +1221,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                     {paginatedRequests.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-12 text-center text-gray-500">
+                        <td colSpan={5} className="p-12 text-center text-white/50">
                           No client requests logged matching search.
                         </td>
                       </tr>
@@ -1132,20 +1232,20 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Table Pagination controls */}
               {totalRequestPages > 1 && (
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-gray-400 font-mono">
+                <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs text-white/60 font-mono">
                   <span>Page {requestPage} of {totalRequestPages}</span>
                   <div className="flex items-center space-x-2">
                     <button
                       disabled={requestPage === 1}
                       onClick={() => setRequestPage((p) => p - 1)}
-                      className="p-2 rounded bg-white/5 hover:bg-white/10 text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                      className="p-2 rounded bg-white/5 hover:bg-white/10 text-white/70 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button
                       disabled={requestPage === totalRequestPages}
                       onClick={() => setRequestPage((p) => p + 1)}
-                      className="p-2 rounded bg-white/5 hover:bg-white/10 text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                      className="p-2 rounded bg-white/5 hover:bg-white/10 text-white/70 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                     >
                       <ChevronRight size={14} />
                     </button>
@@ -1179,12 +1279,12 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     <h3 className="font-sans font-bold text-white uppercase text-xs">
                       {editingProject.id ? "EDIT PORTFOLIO SPECIFICATIONS" : "NEW PORTFOLIO PROJECT SPECIFICATION"}
                     </h3>
-                    <button onClick={() => setEditingProject(null)} className="text-gray-500 hover:text-white">
+                    <button onClick={() => setEditingProject(null)} className="text-white/50 hover:text-white">
                       <X size={16} />
                     </button>
                   </div>
 
-                  <form onSubmit={handleSaveProject} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gray-300">
+                  <form onSubmit={handleSaveProject} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-white/70">
                     <div className="space-y-1.5">
                       <label className="block font-sans font-bold uppercase">Project Title *</label>
                       <input
@@ -1265,7 +1365,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         />
                         <label
                           htmlFor="admin-video-file"
-                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 font-semibold flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
+                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 font-semibold flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
                         >
                           <Upload size={12} />
                           <span>{isUploading ? "Uploading..." : "Select Video"}</span>
@@ -1277,7 +1377,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       
                       {isUploading && (
                         <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
-                          <div className="flex justify-between text-xs font-mono text-gray-400">
+                          <div className="flex justify-between text-xs font-mono text-white/60">
                             <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
                             <span>{uploadProgress}%</span>
                           </div>
@@ -1287,7 +1387,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                               style={{ width: `${uploadProgress}%` }}
                             />
                           </div>
-                          <div className="flex justify-between text-[10px] font-mono text-gray-500">
+                          <div className="flex justify-between text-[10px] font-mono text-white/50">
                             <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
                             <span>ETA: {formatTime(uploadStats.eta)}</span>
                           </div>
@@ -1306,16 +1406,16 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="button"
                         onClick={() => setEditingProject(null)}
-                        className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white"
+                        className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        disabled={isUploading}
-                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
+                        disabled={isUploading || isSaving}
+                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
-                        Forge Item
+                        {isSaving ? "Saving..." : "Forge Item"}
                       </button>
                     </div>
                   </form>
@@ -1336,21 +1436,21 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                     <div className="flex items-center space-x-4 shrink-0">
                       {/* Order indicator */}
-                      <span className="font-mono text-gray-500 text-[10px]">ORDER_{proj.order}</span>
+                      <span className="font-mono text-white/50 text-[10px]">ORDER_{proj.order}</span>
 
                       {/* Reorder Arrows */}
                       <div className="flex items-center space-x-1">
                         <button
                           disabled={idx === 0}
                           onClick={() => handleReorderProject(idx, "up")}
-                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-20 cursor-pointer"
+                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-20 cursor-pointer"
                         >
                           <ArrowUp size={12} />
                         </button>
                         <button
                           disabled={idx === portfolio.length - 1}
                           onClick={() => handleReorderProject(idx, "down")}
-                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white disabled:opacity-20 cursor-pointer"
+                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-20 cursor-pointer"
                         >
                           <ArrowDown size={12} />
                         </button>
@@ -1392,7 +1492,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-cyan-500/20 space-y-4 text-xs">
                   <h3 className="font-sans font-bold text-white uppercase">ADD / EDIT PDF FILE PARAMETERS</h3>
                   
-                  <form onSubmit={handleSavePdf} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-300">
+                  <form onSubmit={handleSavePdf} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-white/70">
                     <div className="space-y-1.5">
                       <label className="block font-bold">Document Title *</label>
                       <input
@@ -1442,7 +1542,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         />
                         <label
                           htmlFor="admin-pdf-file"
-                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
+                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white/70 flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
                         >
                           <Upload size={12} />
                           <span>{isUploading ? "Uploading..." : "Select PDF"}</span>
@@ -1454,7 +1554,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       
                       {isUploading && (
                         <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
-                          <div className="flex justify-between text-xs font-mono text-gray-400">
+                          <div className="flex justify-between text-xs font-mono text-white/60">
                             <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
                             <span>{uploadProgress}%</span>
                           </div>
@@ -1464,7 +1564,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                               style={{ width: `${uploadProgress}%` }}
                             />
                           </div>
-                          <div className="flex justify-between text-[10px] font-mono text-gray-500">
+                          <div className="flex justify-between text-[10px] font-mono text-white/50">
                             <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
                             <span>ETA: {formatTime(uploadStats.eta)}</span>
                           </div>
@@ -1488,7 +1588,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         onChange={(e) => setEditingPdf({ ...editingPdf, downloadsAllowed: e.target.checked })}
                         className="accent-cyan-500 rounded cursor-pointer"
                       />
-                      <label htmlFor="pdf-downloads-toggle" className="font-sans text-xs text-gray-300 cursor-pointer select-none">
+                      <label htmlFor="pdf-downloads-toggle" className="font-sans text-xs text-white/70 cursor-pointer select-none">
                         Allow Client Downloading (if false, clients can only preview/print but cannot download)
                       </label>
                     </div>
@@ -1497,16 +1597,16 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="button"
                         onClick={() => setEditingPdf(null)}
-                        className="px-4 py-2 rounded-lg bg-white/5 text-gray-400 hover:text-white"
+                        className="px-4 py-2 rounded-lg bg-white/5 text-white/60 hover:text-white"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        disabled={isUploading}
-                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
+                        disabled={isUploading || isSaving}
+                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
-                        Commit PDF
+                        {isSaving ? "Saving..." : "Commit PDF"}
                       </button>
                     </div>
                   </form>
@@ -1546,7 +1646,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
           {/* TAB 5: CONTENT STUDIO (WEBSITE TEXTS) */}
           {activeTab === "content" && content && (
-            <div id="admin-tab-content" className="space-y-8 animate-fade-in text-xs text-gray-300">
+            <div id="admin-tab-content" className="space-y-8 animate-fade-in text-xs text-white/70">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
                   CONTENT STUDIO (IN-LINE EDITOR)
@@ -1562,7 +1662,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div className="space-y-3">
-                      <p className="text-gray-400 text-[11px] leading-relaxed">
+                      <p className="text-white/60 text-[11px] leading-relaxed">
                         Upload your custom Frame Forge Studios brand logo. Supported formats: PNG, JPG, JPEG, SVG.
                         This will dynamically propagate across all headers, footers, navigation, and loading stages in real-time.
                       </p>
@@ -1600,7 +1700,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="p-4 rounded-xl bg-white/[0.01] border border-white/5 flex flex-col items-center justify-center min-h-[120px] text-center space-y-2">
-                      <span className="text-[10px] text-gray-500 uppercase tracking-widest">// Brand Logo Preview</span>
+                      <span className="text-[10px] text-white/50 uppercase tracking-widest">// Brand Logo Preview</span>
                       {content.logoUrl ? (
                         <div className="flex flex-col items-center space-y-2">
                           <img
@@ -1755,16 +1855,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                 {/* Submits content */}
                 <div className="flex items-center justify-end space-x-4 pt-4 border-t border-white/5">
-                  {contentSaveSuccess && (
-                    <span className="text-green-400 font-mono text-[11px] animate-fade-in">
-                      ✓ Website configurations saved successfully!
-                    </span>
-                  )}
+                  
                   <button
                     type="submit"
-                    className="px-8 py-3 rounded-xl bg-cyan-500 text-black font-sans font-black text-xs uppercase shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 transition-all cursor-pointer"
+                    disabled={isSaving}
+                    className={`px-8 py-3 rounded-xl font-sans font-black text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
                   >
-                    SAVE ALL TEXT CONFIGS
+                    {isSaving ? "SAVING..." : "SAVE ALL TEXT CONFIGS"}
                   </button>
                 </div>
               </form>
@@ -1773,7 +1870,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
           {/* TAB 6: CAPABILITIES & SERVICES STUDIO */}
           {activeTab === "services" && (
-            <div id="admin-tab-services" className="space-y-6 animate-fade-in text-xs text-gray-300">
+            <div id="admin-tab-services" className="space-y-6 animate-fade-in text-xs text-white/70">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
                   CAPABILITIES & CORE SERVICES
@@ -1871,7 +1968,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     <div className="space-y-1.5">
                       <div className="flex justify-between items-center">
                         <label className="block font-bold">Pop-open Detail Description (~50 words detailed view) *</label>
-                        <span className="text-[10px] text-gray-500 font-mono">
+                        <span className="text-[10px] text-white/50 font-mono">
                           {editingService.fullDescription ? editingService.fullDescription.split(/\s+/).filter(Boolean).length : 0} words
                         </span>
                       </div>
@@ -1890,15 +1987,16 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="button"
                         onClick={() => setEditingService(null)}
-                        className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 border border-white/5 text-xs font-bold uppercase transition-all cursor-pointer"
+                        className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 border border-white/5 text-xs font-bold uppercase transition-all cursor-pointer"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 transition-all cursor-pointer"
+                        disabled={isSaving}
+                        className={`px-6 py-2 rounded-lg font-sans font-bold text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
                       >
-                        Save Capability
+                        {isSaving ? "Saving..." : "Save Capability"}
                       </button>
                     </div>
                   </form>
@@ -1911,7 +2009,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   <h3 className="font-sans font-bold text-xs text-white uppercase tracking-wider">
                     CURRENT SERVICE ITEMS
                   </h3>
-                  <span className="font-mono text-[9px] text-gray-500">{services.length} SAVED</span>
+                  <span className="font-mono text-[9px] text-white/50">{services.length} SAVED</span>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -1922,7 +2020,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     >
                       <div className="space-y-3 flex-1">
                         <div className="flex items-center gap-3">
-                          <span className="font-mono text-[10px] text-gray-600 font-bold px-1.5 py-0.5 rounded bg-white/[0.02] border border-white/5">
+                          <span className="font-mono text-[10px] text-white/40 font-bold px-1.5 py-0.5 rounded bg-white/[0.02] border border-white/5">
                             ORD_{srv.order}
                           </span>
                           <span className="font-sans font-bold text-sm text-cyan-400 uppercase tracking-wide">
@@ -1934,12 +2032,12 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         </div>
 
                         <div className="space-y-1">
-                          <p className="text-gray-400 text-xs font-semibold leading-relaxed">
-                            <span className="text-gray-600 uppercase font-bold text-[9px] mr-1">Summary:</span>
+                          <p className="text-white/60 text-xs font-semibold leading-relaxed">
+                            <span className="text-white/40 uppercase font-bold text-[9px] mr-1">Summary:</span>
                             {srv.desc}
                           </p>
-                          <p className="text-gray-500 text-xs italic leading-relaxed bg-white/[0.01] p-3 rounded-lg border border-white/[0.02]">
-                            <span className="text-cyan-600/60 uppercase font-black not-italic text-[8px] tracking-wider block mb-1">// DYNAMIC POP OPEN DETAIL (~50 words):</span>
+                          <p className="text-white/50 text-xs leading-relaxed bg-white/[0.01] p-3 rounded-lg border border-white/[0.02]">
+                            <span className="text-cyan-600/60 uppercase font-black not-text-[8px] tracking-wider block mb-1">// DYNAMIC POP OPEN DETAIL (~50 words):</span>
                             "{srv.fullDescription}"
                           </p>
                         </div>
@@ -1951,7 +2049,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         <button
                           disabled={idx === 0}
                           onClick={() => handleReorderService(idx, "up")}
-                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-gray-300 border border-white/5 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer"
+                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/70 border border-white/5 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer"
                           title="Move Up"
                         >
                           <ArrowUp size={12} />
@@ -1960,7 +2058,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         <button
                           disabled={idx === services.length - 1}
                           onClick={() => handleReorderService(idx, "down")}
-                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-gray-300 border border-white/5 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer"
+                          className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/70 border border-white/5 disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer"
                           title="Move Down"
                         >
                           <ArrowDown size={12} />
@@ -1987,7 +2085,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                   {services.length === 0 && (
                     <div className="p-12 text-center border border-dashed border-white/10 rounded-2xl">
-                      <p className="text-gray-500 text-sm">No capabilities/services in the database yet.</p>
+                      <p className="text-white/50 text-sm">No capabilities/services in the database yet.</p>
                       <button
                         onClick={() => setEditingService({ iconName: "Film", order: 1 })}
                         className="mt-3 px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase cursor-pointer inline-flex items-center gap-1"
@@ -2003,6 +2101,19 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
         </div>
       </div>
+
+      {saveSuccessMsg && (
+        <div className="fixed bottom-4 right-4 bg-green-500/10 text-green-400 border border-green-500/20 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 z-50 backdrop-blur-md animate-fade-in">
+          <CheckCircle size={18} />
+          <span className="font-sans font-medium text-sm">{saveSuccessMsg}</span>
+        </div>
+      )}
+      {saveError && (
+        <div className="fixed bottom-4 right-4 bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 z-50 backdrop-blur-md animate-fade-in">
+          <AlertTriangle size={18} />
+          <span className="font-sans font-medium text-sm">{saveError}</span>
+        </div>
+      )}
     </div>
   );
 }

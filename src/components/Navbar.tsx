@@ -256,7 +256,7 @@ export default function Navbar({
                   }}
                   className="flex items-center space-x-1 px-3 py-1.5 rounded-full liquid-glass text-white text-[10px] font-mono transition-all duration-300 interactive cursor-pointer hover:bg-white/10"
                 >
-                  <ShieldAlert size={12} className="text-zinc-300" />
+                  <ShieldAlert size={12} className="text-white/70" />
                   <span>CONSOLE</span>
                 </button>
                 <button
@@ -278,7 +278,7 @@ export default function Navbar({
                 onCloseVideo?.();
                 onOpenRequests();
               }}
-              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-sans font-medium text-[14px] tracking-[0.08em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
+              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
             >
               Start Project
             </button>
@@ -292,7 +292,7 @@ export default function Navbar({
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu-overlay"
             onClick={toggleMobileMenu}
-            className="flex md:hidden items-center justify-center w-11 h-11 rounded-full liquid-glass border border-white/10 text-white hover:text-zinc-300 hover:scale-105 active:scale-95 transition-all duration-300 z-50 relative cursor-pointer"
+            className="flex md:hidden items-center justify-center w-11 h-11 rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 hover:scale-105 active:scale-95 transition-all duration-300 z-50 relative cursor-pointer"
           >
             <div className="w-5 h-4 flex flex-col justify-between relative">
               <span
@@ -382,7 +382,7 @@ export default function Navbar({
                     }}
                     className="flex items-center justify-center space-x-2 py-3.5 rounded-xl liquid-glass text-white text-[11px] font-mono transition-all duration-300 interactive cursor-pointer hover:bg-white/10 w-full border border-white/10"
                   >
-                    <ShieldAlert size={14} className="text-zinc-300" />
+                    <ShieldAlert size={14} className="text-white/70" />
                     <span>ADMIN CONSOLE</span>
                   </button>
                   <button
@@ -402,7 +402,7 @@ export default function Navbar({
                   setIsMobileMenuOpen(false);
                   onOpenRequests();
                 }}
-                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-sans font-medium text-[14px] tracking-[0.1em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
               >
                 <Sparkles size={16} className="text-white/80" />
                 <span>Start Project</span>

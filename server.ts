@@ -6,7 +6,7 @@ import adminApi from './api/admin.js';
 import dbApi from './api/db.js';
 import notifyApi from './api/notify.js';
 import systemApi from './api/system.js';
-import uploadApi from './api/upload.js';
+import cloudinarySignApi from './api/cloudinary-sign.js';
 
 
 async function startServer() {
@@ -14,18 +14,14 @@ async function startServer() {
   const PORT = 3000;
 
   app.use((req, res, next) => {
-    if (req.path.startsWith('/api/admin/upload') || req.path.startsWith('/api/upload')) {
-      next();
-    } else {
-      express.json({ limit: '50mb' })(req, res, next);
-    }
+    express.json({ limit: '50mb' })(req, res, next);
   });
   
   const routeApi = async (req: any, res: any) => {
     const pathname = req.path;
     try {
-      if (pathname === '/api/admin/upload' || pathname === '/api/upload') {
-        return await uploadApi(req, res);
+      if (pathname === '/api/cloudinary/sign') {
+        return await cloudinarySignApi(req, res);
       } else if (pathname === '/api/health' || pathname === '/api/db-status' || pathname.startsWith('/api/stream-video/') || pathname.startsWith('/api/documents/')) {
         return await systemApi(req, res);
       } else if (pathname === '/api/notify-email' || pathname === '/api/notify') {

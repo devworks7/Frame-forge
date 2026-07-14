@@ -178,7 +178,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full liquid-glass hover:bg-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer border border-white/5"
+            className="p-2 rounded-full liquid-glass hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer border border-white/5"
           >
             <X size={14} />
           </button>
@@ -194,7 +194,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-serif text-[28px] sm:text-[34px] text-white tracking-tight font-normal leading-tight">
+                <h3 className="font-sans font-medium text-[22px] sm:text-[28px] text-white tracking-tight font-normal leading-tight">
                   Proposal Submitted
                 </h3>
                 <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
@@ -211,14 +211,14 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
               <button
                 onClick={onClose}
-                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-sans font-medium text-[13px] tracking-[0.08em] uppercase transition-all cursor-pointer"
+                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase transition-all cursor-pointer"
               >
                 Return to Studio
               </button>
             </div>
           ) : (
             /* COMPREHENSIVE SUBMIT PROPOSAL FORM */
-            <form onSubmit={handleSubmit} className="space-y-8 text-xs text-zinc-400">
+            <form onSubmit={handleSubmit} className="space-y-8 text-xs text-white/50">
               {errorMsg && (
                 <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/20 text-rose-400 text-xs font-sans leading-relaxed flex items-center space-x-2 animate-fade-in">
                   <span className="font-bold uppercase tracking-wider">Error:</span>
@@ -381,9 +381,9 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-8 py-3.5 rounded-full font-sans font-medium text-[13px] tracking-[0.08em] uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
+                  className={`px-8 py-3.5 rounded-full font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
                     isSubmitting
-                      ? "bg-white/5 text-zinc-500 cursor-not-allowed border border-white/5"
+                      ? "bg-white/5 text-white/50 cursor-not-allowed border border-white/5"
                       : "liquid-glass text-white border-white/10 hover:bg-white/10"
                   }`}
                 >

@@ -26,7 +26,7 @@ export default function ServicesSection() {
   }, []);
 
   const getIcon = (iconName: string) => {
-    const iconClass = "text-zinc-300";
+    const iconClass = "text-white/70";
     const size = 16;
     switch (iconName) {
       case "Film": return <Film className={iconClass} size={size} />;
@@ -44,7 +44,7 @@ export default function ServicesSection() {
       <section id="services" className="relative py-36 px-6 flex justify-center items-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-5 h-5 border border-zinc-500 border-t-white rounded-full animate-spin" />
-          <p className="font-sans font-bold text-[9px] uppercase tracking-[0.25em] text-zinc-500">Loading Capabilities...</p>
+          <p className="font-sans font-bold text-[9px] uppercase tracking-[0.25em] text-white/50">Loading Capabilities...</p>
         </div>
       </section>
     );
@@ -62,10 +62,10 @@ export default function ServicesSection() {
           <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
             CORE SERVICES
           </span>
-          <h2 className="font-serif text-[34px] sm:text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+          <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
             Creative Capabilities
           </h2>
-          <p className="font-sans font-light text-white/70 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.7] tracking-wide">
+          <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] tracking-wide">
             Premium websites, cinematic editing, motion graphics, and AI solutions designed for modern businesses. Click any service below to explore the details.
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function ServicesSection() {
                         className="border-t border-white/5 pt-4 mt-2"
                         onClick={(e) => e.stopPropagation()} // Prevent double trigger
                       >
-                        <p className="font-sans font-light text-[13px] text-white/90 leading-[1.6] bg-white/5 p-3 rounded-lg border border-white/5 italic">
+                        <p className="font-sans font-light text-[13px] text-white/90 leading-[1.6] bg-white/5 p-3 rounded-lg border border-white/5">
                           "{srv.fullDescription}"
                         </p>
                         <div className="flex justify-end pt-2">

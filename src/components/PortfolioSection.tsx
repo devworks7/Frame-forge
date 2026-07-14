@@ -68,10 +68,10 @@ export default function PortfolioSection() {
             <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
               FEATURED WORK
             </span>
-            <h2 className="font-serif text-[34px] sm:text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+            <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
               Experience the Craft.
             </h2>
-            <p className="font-sans font-light text-white/70 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.7] max-w-2xl">
+            <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl">
               Explore featured edits and creative projects crafted for brands, creators, and businesses.
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function PortfolioSection() {
 
           {projects.length === 0 && (
             <div className="col-span-full py-20 text-center">
-              <p className="font-sans text-zinc-500 text-xs">No project streams are online at this time.</p>
+              <p className="font-sans text-white/50 text-xs">No project streams are online at this time.</p>
             </div>
           )}
         </div>
@@ -174,7 +174,7 @@ export default function PortfolioSection() {
             
             <button
               onClick={handleCloseProject}
-              className="p-2 rounded-full liquid-glass hover:bg-white/10 text-zinc-400 hover:text-white transition-all cursor-pointer shadow-sm"
+              className="p-2 rounded-full liquid-glass hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer shadow-sm"
             >
               <X size={14} />
             </button>

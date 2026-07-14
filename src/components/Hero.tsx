@@ -37,14 +37,14 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
         <div className="space-y-8">
           <h1
             id="hero-headline"
-            className="font-serif text-[42px] sm:text-[56px] md:text-[72px] lg:text-[100px] text-white font-normal leading-[0.95] tracking-[-0.04em] animate-fade-rise"
+            className="font-serif text-[42px] sm:text-[56px] md:text-[72px] lg:text-[110px] text-white font-normal leading-[0.95] tracking-[-0.04em] animate-fade-rise"
             dangerouslySetInnerHTML={{ __html: content?.heroTitle || 'We forge <span className="block sm:inline">experiences.</span>' }}
           />
           
           {/* Beautiful supporting text */}
           <p
             id="hero-subheading"
-            className="max-w-2xl mx-auto font-sans font-light text-[15px] sm:text-[17px] md:text-[19px] text-white/70 leading-[1.7] tracking-wide animate-opacity-fade"
+            className="max-w-2xl mx-auto font-sans font-light text-[17px] sm:text-[19px] text-white/70 leading-[1.7] tracking-wide animate-opacity-fade"
           >
             {content?.heroSubtitle || "Premium websites, cinematic edits, and AI-powered digital experiences designed to build trust and attract more customers."}
           </p>
@@ -59,7 +59,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           <button
             id="hero-cta-start"
             onClick={onOpenRequests}
-            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-medium text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
+            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
           >
             <span>Start Your Project</span>
             <ArrowUpRight size={14} />
@@ -69,9 +69,9 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           <button
             id="hero-cta-portfolio"
             onClick={() => scrollToSection("portfolio")}
-            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-medium text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
+            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
           >
-            <Film size={13} className="text-zinc-300" />
+            <Film size={13} className="text-white/70" />
             <span>Watch Portfolio</span>
           </button>
         </div>
@@ -83,11 +83,11 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
         onClick={() => scrollToSection("portfolio")}
         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-3 cursor-pointer group z-20"
       >
-        <span className="font-sans font-bold text-[8px] tracking-[0.3em] text-zinc-500 group-hover:text-white uppercase transition-colors duration-300">
+        <span className="font-sans font-bold text-[8px] tracking-[0.3em] text-white/50 group-hover:text-white uppercase transition-colors duration-300">
           Scroll to explore
         </span>
         <div className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center group-hover:bg-white/15 transition-all duration-300 shadow-sm">
-          <ArrowDown size={12} className="text-zinc-400 group-hover:text-white transition-colors duration-300" />
+          <ArrowDown size={12} className="text-white/50 group-hover:text-white transition-colors duration-300" />
         </div>
       </div>
     </section>

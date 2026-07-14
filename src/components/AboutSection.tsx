@@ -19,16 +19,16 @@ export default function AboutSection({ content }: AboutProps) {
             <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block">
               ABOUT THE STUDIO
             </span>
-            <h2 className="font-serif text-[34px] sm:text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight">
+            <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight">
               {content.aboutTitle || "A bespoke post-production house built for leaders."}
             </h2>
           </div>
           
           <div className="space-y-12 text-center lg:text-left flex flex-col items-center lg:items-start max-w-xl mx-auto lg:mx-0">
-            <p className="font-serif italic text-[18px] sm:text-[22px] md:text-[26px] text-white/90 leading-[1.4] font-normal">
+            <p className="font-sans font-medium text-[22px] sm:text-[28px] text-white/90 leading-[1.4]">
               {content.aboutQuote || '"Every project starts with a fresh idea—not a template. From cinematic edits to modern websites, everything is designed to reflect your brand and help it stand out."'}
             </p>
-            <p className="font-sans font-light text-white/70 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.8] tracking-wide">
+            <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.8] tracking-wide">
               {content.aboutText || "Frame Forge is a creative studio focused on crafting premium websites, cinematic edits, and digital experiences that help businesses stand out. We combine modern design, thoughtful storytelling, and AI-powered workflows to create work that looks professional, builds trust, and leaves a lasting impression. Every project is approached with attention to detail, ensuring a polished result that reflects your brand with confidence."}
             </p>
           </div>
