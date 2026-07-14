@@ -258,9 +258,9 @@ async function seedDB() {
     const adminCount = await AdminUser.countDocuments();
     if (adminCount === 0) {
       console.log("Admins collection is empty. Seeding default administrator...");
-      const passwordHash = await bcrypt.hash("devshubh@2026", 10);
+      const passwordHash = await bcrypt.hash("devshubh07", 10);
       await AdminUser.create({
-        username: "frameforge.in",
+        username: "frameforge.com",
         passwordHash,
         mustChangePassword: false,
       });
