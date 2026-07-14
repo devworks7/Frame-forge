@@ -36,8 +36,7 @@ export default function App() {
   // Scroll to Top state
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Cookie Consent banner state
-  const [showCookieConsent, setShowCookieConsent] = useState(false);
+  
 
   // Initialize and Seed Firestore on Mount
   useEffect(() => {
@@ -48,10 +47,6 @@ export default function App() {
 
       await incrementAnalytics("totalVisitors");
       await logActivity("visit", "A visitor entered the creative studio.");
-
-      if (!localStorage.getItem("ff_cookies_accepted")) {
-        setShowCookieConsent(true);
-      }
 
       // Preload critical background video
       const preloadVideo = () => {
@@ -148,11 +143,6 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleAcceptCookies = () => {
-    localStorage.setItem("ff_cookies_accepted", "true");
-    setShowCookieConsent(false);
-  };
-
   const handlePageChange = (page: "home" | "pricing" | "proposal") => {
     if (page === "proposal") {
       setShowRequests(true);
@@ -246,28 +236,7 @@ export default function App() {
         <Mail size={16} />
       </a>
 
-      {/* Cookie Consent Toast */}
-      {showCookieConsent && (
-        <div
-          id="cookie-consent-toast"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 max-w-md w-[calc(100%-2rem)] p-6 rounded-xl liquid-glass border border-white/10 shadow-xl z-40 space-y-4 bg-[#070b0e]/90"
-        >
-          <div className="flex items-start space-x-3.5 leading-relaxed text-white/70">
-            <Sparkles size={16} className="text-white/40 shrink-0 mt-0.5" />
-            <p className="font-sans font-light text-[13px] leading-[1.6]">
-              We appreciate privacy. Frame Forge uses essential cookies to authenticate administrators and secure project video playback streams. By navigating further, you assent to these parameters.
-            </p>
-          </div>
-          <div className="flex items-center justify-end space-x-3">
-            <button
-              onClick={handleAcceptCookies}
-              className="px-5 py-2.5 rounded-full liquid-glass border border-white/15 text-white font-sans font-medium uppercase tracking-[0.08em] text-[11px] hover:bg-white/10 transition-all cursor-pointer interactive shadow-sm"
-            >
-              Assent Parameters
-            </button>
-          </div>
-        </div>
-      )}
+      
 
       {/* Main sticky navigation header */}
       <Navbar

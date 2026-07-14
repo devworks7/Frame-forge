@@ -192,6 +192,8 @@ export default function PortfolioSection() {
                 controlsList="nodownload nofullscreen noremoteplayback"
                 disablePictureInPicture
                 autoPlay
+                preload="metadata"
+                playsInline
                 onContextMenu={preventContextMenu}
                 className="w-full h-full object-contain"
                 id="secure-raw-video"

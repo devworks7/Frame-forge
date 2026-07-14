@@ -71,6 +71,11 @@ export default async function handler(req: any, res: any) {
 
     const result = await uploadBufferToCloudinary(req.file.buffer, req.file.originalname, req.file.mimetype);
     
+    // For video files on Cloudinary, we can derive a thumbnail by changing extension to .jpg
+    // We will use standard string replacement for simplicity.
+    const isVideo = req.file.mimetype.startsWith("video/");
+    const thumbnailUrl = isVideo && result.secure_url ? result.secure_url.replace(/\.[^/.]+$/, ".jpg") : result.secure_url;
+
     return res.json({
       success: true,
       secure_url: result.secure_url,
@@ -80,6 +85,11 @@ export default async function handler(req: any, res: any) {
       size: req.file.size,
       mimeType: req.file.mimetype,
       path: result.secure_url,
+      format: result.format,
+      duration: result.duration,
+      width: result.width,
+      height: result.height,
+      thumbnail: thumbnailUrl
     });
   } catch (err: any) {
     console.error("Cloudinary upload failed:", err);

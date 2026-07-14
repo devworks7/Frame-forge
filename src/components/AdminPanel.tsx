@@ -16,6 +16,19 @@ import {
   getServices, saveServiceItem, deleteServiceItem
 } from "../lib/dataService";
 
+function formatBytes(bytes: number) {
+  if (!bytes || bytes === 0) return "0 MB";
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function formatTime(seconds: number) {
+  if (!seconds || seconds === 0 || !isFinite(seconds)) return "calculating...";
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return `${m}m ${s}s`;
+}
+
 interface AdminPanelProps {
   onClose: () => void;
   onLoginStateChange: (loggedIn: boolean) => void;
@@ -70,6 +83,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [uploadedFileUrl, setUploadedFileUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStats, setUploadStats] = useState({ loaded: 0, total: 0, speed: 0, eta: 0 });
 
   // Database Connection Status
   const [dbStatus, setDbStatus] = useState<{ connected: boolean; mode: string; error: string | null }>({
@@ -273,43 +288,111 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   };
 
   // Secure local file uploader on Express backend
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
     
     setIsUploading(true);
     setUploadError(null);
     setUploadSuccessMsg(null);
+    setUploadProgress(0);
+    setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
+
     const formData = new FormData();
     formData.append("file", file);
 
-    try {
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      const d = await res.json();
-      if (d.success) {
-        setUploadedFileName(d.fileName);
-        setUploadedFileUrl(d.path);
-        setUploadSuccessMsg(`File uploaded successfully: ${d.originalName}`);
-      } else {
-        setUploadError(d.error || "File upload failed.");
+    const startTime = Date.now();
+    let lastLoaded = 0;
+    let lastTime = startTime;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/admin/upload", true);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = Math.round((event.loaded / event.total) * 100);
+        setUploadProgress(percentComplete);
+
+        const currentTime = Date.now();
+        const timeDiff = (currentTime - lastTime) / 1000;
+        
+        if (timeDiff > 0.5 || event.loaded === event.total) {
+          const bytesDiff = event.loaded - lastLoaded;
+          const speedBps = bytesDiff / timeDiff;
+          const bytesRemaining = event.total - event.loaded;
+          const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
+          
+          setUploadStats({
+            loaded: event.loaded,
+            total: event.total,
+            speed: speedBps,
+            eta: etaSeconds
+          });
+
+          lastLoaded = event.loaded;
+          lastTime = currentTime;
+        }
       }
-    } catch (err) {
-      setUploadError("Upload failed. Limit: 500MB, allowed types: MP4, MOV, WebM, PDF.");
-    } finally {
+    };
+
+    xhr.onload = async () => {
+      if (xhr.status === 200) {
+        try {
+          const d = JSON.parse(xhr.responseText);
+          if (d.success) {
+            setUploadSuccessMsg("Upload complete. Verifying processing...");
+            
+            // Basic HEAD request to check if reachable
+            try {
+               const checkRes = await fetch(d.secure_url, { method: "HEAD" });
+               if (!checkRes.ok && checkRes.status !== 405) {
+                 throw new Error("URL not reachable");
+               }
+               setUploadedFileName(d.originalName);
+               setUploadedFileUrl(d.secure_url);
+               setUploadSuccessMsg(`File uploaded successfully: ${d.originalName}`);
+               if (d.thumbnail) {
+                 setEditingProject(prev => prev ? { ...prev, thumbnail: d.thumbnail, duration: d.duration ? String(Math.round(d.duration)) + "s" : prev.duration } : null);
+               }
+            } catch (err) {
+               setUploadError("Processing failed or file not accessible.");
+            }
+          } else {
+            setUploadError(d.error || "File upload failed.");
+          }
+        } catch (err) {
+           setUploadError("Invalid response from server.");
+        }
+      } else {
+        setUploadError("Upload failed. Limit: 500MB, allowed types: MP4, MOV, WebM, PDF.");
+      }
       setIsUploading(false);
-    }
+      setTimeout(() => {
+        setUploadProgress(0);
+        setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
+      }, 3000);
+    };
+
+    xhr.onerror = () => {
+      setUploadError("Network error during upload.");
+      setIsUploading(false);
+      setUploadProgress(0);
+    };
+
+    xhr.send(formData);
   };
 
   // Portfolio items operations
   const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject) return;
+    
+    const finalVideoUrl = uploadedFileUrl || editingProject.videoUrl;
+    if (!finalVideoUrl || finalVideoUrl.startsWith("blob:") || finalVideoUrl.startsWith("file:") || finalVideoUrl.includes("sample.mp4")) {
+      alert("Please upload a valid portfolio video before forging this item.");
+      return;
+    }
 
     const finalItem: PortfolioItem = {
       id: editingProject.id || "proj-" + Date.now(),
@@ -321,7 +404,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       softwareUsed: editingProject.softwareUsed || ["After Effects"],
       duration: editingProject.duration || "1 min",
       tags: editingProject.tags || ["VFX"],
-      videoUrl: uploadedFileUrl || editingProject.videoUrl || "/api/stream-video/sample.mp4",
+      videoUrl: finalVideoUrl,
       thumbnail: editingProject.thumbnail || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80",
       order: editingProject.order || portfolio.length + 1,
     };
@@ -1178,22 +1261,43 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                           className="hidden"
                           onChange={handleFileUpload}
                           accept="video/mp4,video/quicktime,video/webm"
+                          disabled={isUploading}
                         />
                         <label
                           htmlFor="admin-video-file"
-                          className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-semibold cursor-pointer flex items-center space-x-1"
+                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 font-semibold flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
                         >
                           <Upload size={12} />
                           <span>{isUploading ? "Uploading..." : "Select Video"}</span>
                         </label>
-                        {uploadedFileName && (
+                        {uploadedFileName && !isUploading && (
                           <span className="text-[10px] text-green-400 truncate max-w-xs">{uploadedFileName}</span>
                         )}
                       </div>
-                      {uploadSuccessMsg && (
+                      
+                      {isUploading && (
+                        <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
+                          <div className="flex justify-between text-xs font-mono text-gray-400">
+                            <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
+                            <span>{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/5">
+                            <div 
+                              className="bg-cyan-500 h-full rounded-full transition-all duration-300 ease-out"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-[10px] font-mono text-gray-500">
+                            <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
+                            <span>ETA: {formatTime(uploadStats.eta)}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadSuccessMsg && !isUploading && (
                         <p className="text-[10px] text-green-400 mt-1">{uploadSuccessMsg}</p>
                       )}
-                      {uploadError && (
+                      {uploadError && !isUploading && (
                         <p className="text-[10px] text-rose-400 mt-1">{uploadError}</p>
                       )}
                     </div>
@@ -1208,7 +1312,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-sans font-bold"
+                        disabled={isUploading}
+                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
                         Forge Item
                       </button>
@@ -1333,22 +1438,43 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                           className="hidden"
                           onChange={handleFileUpload}
                           accept="application/pdf"
+                          disabled={isUploading}
                         />
                         <label
                           htmlFor="admin-pdf-file"
-                          className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 cursor-pointer flex items-center space-x-1"
+                          className={`px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 flex items-center space-x-1 ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}`}
                         >
                           <Upload size={12} />
                           <span>{isUploading ? "Uploading..." : "Select PDF"}</span>
                         </label>
-                        {uploadedFileName && (
+                        {uploadedFileName && !isUploading && (
                           <span className="text-[10px] text-green-400 truncate max-w-xs">{uploadedFileName}</span>
                         )}
                       </div>
-                      {uploadSuccessMsg && (
+                      
+                      {isUploading && (
+                        <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
+                          <div className="flex justify-between text-xs font-mono text-gray-400">
+                            <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
+                            <span>{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/5">
+                            <div 
+                              className="bg-cyan-500 h-full rounded-full transition-all duration-300 ease-out"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-[10px] font-mono text-gray-500">
+                            <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
+                            <span>ETA: {formatTime(uploadStats.eta)}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadSuccessMsg && !isUploading && (
                         <p className="text-[10px] text-green-400 mt-1">{uploadSuccessMsg}</p>
                       )}
-                      {uploadError && (
+                      {uploadError && !isUploading && (
                         <p className="text-[10px] text-rose-400 mt-1">{uploadError}</p>
                       )}
                     </div>
@@ -1377,7 +1503,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-sans font-bold"
+                        disabled={isUploading}
+                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
                         Commit PDF
                       </button>
