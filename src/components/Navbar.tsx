@@ -278,7 +278,7 @@ export default function Navbar({
                 onCloseVideo?.();
                 onOpenRequests();
               }}
-              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
+              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-display font-medium text-[15px] tracking-wide hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
             >
               Start Project
             </button>
@@ -355,7 +355,7 @@ export default function Navbar({
                       key={item.label}
                       variants={itemVariants}
                       onClick={() => handleNavItemClick(item)}
-                      className={`font-sans text-[22px] sm:text-[26px] uppercase tracking-[0.14em] font-light transition-all duration-300 py-3 w-full max-w-xs text-center cursor-pointer min-h-[48px] flex items-center justify-center rounded-full ${
+                      className={`font-display text-[22px] sm:text-[26px] uppercase tracking-[0.14em] font-light transition-all duration-300 py-3 w-full max-w-xs text-center cursor-pointer min-h-[48px] flex items-center justify-center rounded-full ${
                         isActive 
                           ? "text-white font-medium bg-white/5 border border-white/10" 
                           : "text-white/60 hover:text-white"
@@ -402,7 +402,7 @@ export default function Navbar({
                   setIsMobileMenuOpen(false);
                   onOpenRequests();
                 }}
-                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-display font-medium text-[15px] tracking-wide hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
               >
                 <Sparkles size={16} className="text-white/80" />
                 <span>Start Project</span>

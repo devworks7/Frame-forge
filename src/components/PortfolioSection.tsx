@@ -65,10 +65,10 @@ export default function PortfolioSection() {
         {/* Section Header */}
         <div id="portfolio-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
           <div className="space-y-6">
-            <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
+            <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
               FEATURED WORK
             </span>
-            <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+            <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
               Experience the Craft.
             </h2>
             <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl">
@@ -114,7 +114,7 @@ export default function PortfolioSection() {
               {/* Text Meta info */}
               <div className="p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-sans font-medium text-[12px] text-white/50 tracking-[0.08em] uppercase">
+                  <span className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase">
                     {proj.category}
                   </span>
                   <span className="font-sans text-white/40 text-[11px] font-light">
@@ -123,7 +123,7 @@ export default function PortfolioSection() {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="font-sans font-medium text-[15px] text-white group-hover:text-white/80 transition-colors uppercase tracking-[0.08em]">
+                  <h3 className="font-display font-medium text-[22px] text-white group-hover:text-white/80 transition-colors tracking-tight">
                     {proj.title}
                   </h3>
                   <p className="font-sans font-light text-[14px] text-white/70 line-clamp-1 leading-[1.6]">
@@ -163,7 +163,7 @@ export default function PortfolioSection() {
                 <Film className="text-white" size={12} />
               </div>
               <div>
-                <h4 className="font-sans font-medium text-[14px] text-white uppercase tracking-[0.08em]">
+                <h4 className="font-display font-medium text-[24px] text-white tracking-tight leading-none">
                   {selectedProject.title}
                 </h4>
                 <p className="font-mono text-[10px] text-white/40 tracking-widest uppercase">
@@ -212,10 +212,10 @@ export default function PortfolioSection() {
             {/* Meta Column */}
             <div className="lg:col-span-5 space-y-6 liquid-glass border border-white/10 p-6 rounded-xl shadow-lg bg-[#070b0e]/80">
               <div className="space-y-1">
-                <span className="font-sans font-medium text-[12px] text-white/50 tracking-[0.08em] uppercase">
+                <span className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase">
                   {selectedProject.category}
                 </span>
-                <h3 className="font-sans font-medium text-[18px] text-white uppercase tracking-[0.08em]">
+                <h3 className="font-display font-medium text-[28px] text-white tracking-tight leading-none">
                   {selectedProject.title}
                 </h3>
               </div>
@@ -228,24 +228,24 @@ export default function PortfolioSection() {
                 {selectedProject.clientName && (
                   <div className="flex items-center text-white/70">
                     <User size={12} className="text-white/40 mr-2.5" />
-                    <span className="font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em] mr-2">Client:</span>
+                    <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Client:</span>
                     <span className="text-white text-[13px] font-light">{selectedProject.clientName}</span>
                   </div>
                 )}
                 <div className="flex items-center text-white/70">
                   <Calendar size={12} className="text-white/40 mr-2.5" />
-                  <span className="font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em] mr-2">Date:</span>
+                  <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Date:</span>
                   <span className="text-white text-[13px] font-light">{selectedProject.date}</span>
                 </div>
                 <div className="flex items-center text-white/70">
                   <Clock size={12} className="text-white/40 mr-2.5" />
-                  <span className="font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em] mr-2">Duration:</span>
+                  <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Duration:</span>
                   <span className="text-white text-[13px] font-light">{selectedProject.duration}</span>
                 </div>
               </div>
 
               <div className="space-y-2.5 pt-4 border-t border-white/10">
-                <span className="block font-sans font-medium text-[11px] uppercase tracking-[0.08em] text-white/50">
+                <span className="block font-mono font-medium text-[10px] uppercase tracking-[0.15em] text-white/50">
                   Production Stack
                 </span>
                 <div className="flex flex-wrap gap-1.5">

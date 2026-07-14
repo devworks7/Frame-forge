@@ -163,7 +163,7 @@ export default function App() {
                 <span className="font-sans font-medium text-white text-[12px]">FF</span>
               </div>
             </div>
-            <span className="font-sans font-medium text-[14px] tracking-[0.2em] text-white uppercase">
+            <span className="font-mono font-medium text-[14px] tracking-[0.2em] text-white uppercase">
               FRAME FORGE
             </span>
             <span className="font-mono text-[10px] text-white/40 tracking-widest uppercase">

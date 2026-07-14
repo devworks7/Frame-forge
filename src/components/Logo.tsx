@@ -62,12 +62,12 @@ export default function Logo({
         {showText && (
           <div className="flex flex-col">
             <span
-              className="font-sans font-medium text-[14px] tracking-[0.2em] uppercase text-white transition-colors duration-300"
+              className="font-display font-medium text-[15px] tracking-wide text-white transition-colors duration-300"
             >
               FRAME FORGE
             </span>
             <span
-              className="font-sans font-light text-[7px] tracking-[0.45em] uppercase text-white/50"
+              className="font-mono font-medium text-[7px] tracking-[0.45em] uppercase text-white/50"
             >
               STUDIOS
             </span>
@@ -170,12 +170,12 @@ export default function Logo({
       {showText && (
         <div className="flex flex-col">
           <span
-            className="font-sans font-medium text-[14px] tracking-[0.2em] uppercase text-white transition-colors duration-300"
+            className="font-display font-medium text-[15px] tracking-wide text-white transition-colors duration-300"
           >
             FRAME FORGE
           </span>
           <span
-            className="font-sans font-light text-[7px] tracking-[0.45em] uppercase text-white/50"
+            className="font-mono font-medium text-[7px] tracking-[0.45em] uppercase text-white/50"
           >
             STUDIOS
           </span>

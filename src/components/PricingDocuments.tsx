@@ -37,10 +37,10 @@ export default function PricingDocuments() {
       
       {/* Page Header */}
       <div id="pricing-header" className="space-y-6 text-center max-w-2xl mx-auto">
-        <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
+        <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
           STUDIO RATES
         </span>
-        <h1 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+        <h1 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
           Bespoke Packages
         </h1>
         <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto">
@@ -58,18 +58,18 @@ export default function PricingDocuments() {
             }`}
           >
             {plan.popular && (
-              <span className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full border border-white/15 bg-white/5 text-white/70 font-sans text-[10px] font-medium uppercase tracking-[0.08em]">
+              <span className="absolute top-4 right-4 px-2.5 py-1 rounded-sm border border-white/15 bg-white/5 text-white/70 font-mono text-[10px] font-medium uppercase tracking-[0.1em]">
                 Most Selected
               </span>
             )}
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <span className="font-sans font-medium text-[12px] text-white/50 uppercase tracking-[0.08em] block">
+                <span className="font-mono font-medium text-[11px] text-white/50 uppercase tracking-[0.15em] block">
                   {plan.name}
                 </span>
                 <div className="flex items-baseline space-x-1.5">
-                  <span className="font-sans font-medium text-4xl text-white">{plan.price}</span>
+                  <span className="font-display font-medium text-4xl text-white tracking-tight">{plan.price}</span>
                   <span className="font-sans text-[13px] text-white/50">{plan.period}</span>
                 </div>
                 <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">

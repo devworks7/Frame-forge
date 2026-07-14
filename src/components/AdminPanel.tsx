@@ -531,8 +531,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
     try {
       await saveSectionContent(content);
       await loadDashboardData();
-      setContentSaveSuccess(true);
-      setTimeout(() => setContentSaveSuccess(false), 3500);
       setSaveSuccessMsg("Content saved successfully.");
       setTimeout(() => setSaveSuccessMsg(null), 3500);
     } catch (err: any) {
@@ -701,7 +699,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <ShieldAlert size={36} />
             </div>
             <div>
-              <h2 className="font-sans font-black text-xl text-white tracking-widest uppercase">
+              <h2 className="font-inter font-black text-xl text-white tracking-widest uppercase">
                 ENGINE ROOM LOGIN
               </h2>
               <p className="font-mono text-[9px] text-white/50 uppercase tracking-wider">
@@ -718,7 +716,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             )}
             {/* Username */}
             <div className="space-y-2">
-              <label className="block font-sans font-bold text-white uppercase tracking-wider">Admin Username</label>
+              <label className="block font-inter font-bold text-white uppercase tracking-wider">Admin Username</label>
               <input
                 required
                 type="text"
@@ -731,7 +729,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block font-sans font-bold text-white uppercase tracking-wider">Passphrase</label>
+              <label className="block font-inter font-bold text-white uppercase tracking-wider">Passphrase</label>
               <input
                 required
                 type="password"
@@ -753,7 +751,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               <button
                 type="submit"
-                className="px-6 py-3 rounded-xl bg-white text-black font-sans font-black text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+                className="px-6 py-3 rounded-xl bg-white text-black font-inter font-black text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
               >
                 ACCESS CONSOLE
               </button>
@@ -777,10 +775,10 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             <div className="inline-flex p-4 rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
               <Key size={32} />
             </div>
-            <h3 className="font-sans font-black text-lg text-white uppercase tracking-wider">
+            <h3 className="font-inter font-black text-lg text-white uppercase tracking-wider">
               UPDATE SECURITY CREDENTIALS
             </h3>
-            <p className="font-sans text-xs text-white/60 leading-relaxed">
+            <p className="font-inter text-xs text-white/60 leading-relaxed">
               As a security compliance mandate, you must change your default password (<code className="text-purple-400">framestrue27</code>) on your very first successful login.
             </p>
           </div>
@@ -792,7 +790,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               </div>
             )}
             <div className="space-y-2">
-              <label className="block font-sans font-bold text-white uppercase">New Admin Passphrase *</label>
+              <label className="block font-inter font-bold text-white uppercase">New Admin Passphrase *</label>
               <input
                 required
                 type="password"
@@ -810,7 +808,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             ) : (
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-white text-black font-sans font-bold uppercase tracking-wider hover:bg-cyan-400 transition-colors cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-white text-black font-inter font-bold uppercase tracking-wider hover:bg-cyan-400 transition-colors cursor-pointer"
               >
                 COMMIT SECURE CREDENTIALS
               </button>
@@ -829,7 +827,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         <div className="flex items-center space-x-3">
           <div className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
           <div>
-            <h2 className="font-sans font-black text-sm text-white uppercase tracking-wider">
+            <h2 className="font-inter font-black text-sm text-white uppercase tracking-wider">
               FRAME FORGE CONTROL SUITE
             </h2>
             <p className="font-mono text-[9px] text-white/50 uppercase">
@@ -963,7 +961,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#060608]">
           {/* Resilient Database Status Banner */}
           {!dbStatus.connected && dbStatus.mode !== "checking" && (
-            <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-sans leading-relaxed flex items-start space-x-3 shadow-[0_0_15px_rgba(244,63,94,0.1)] animate-fade-in">
+            <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-inter leading-relaxed flex items-start space-x-3 shadow-[0_0_15px_rgba(244,63,94,0.1)] animate-fade-in">
               <ShieldAlert className="text-rose-400 shrink-0 mt-0.5" size={16} />
               <div className="space-y-1">
                 <span className="font-bold text-white uppercase tracking-wider block">Database Connection Status: Offline / Unavailable</span>
@@ -988,7 +986,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {/* TAB 1: METRICS */}
           {activeTab === "metrics" && (
             <div id="admin-tab-metrics" className="space-y-8 animate-fade-in">
-              <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide border-b border-white/5 pb-3">
+              <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide border-b border-white/5 pb-3">
                 ANALYTICS & METRICS
               </h2>
 
@@ -1009,8 +1007,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <span className="font-mono text-[8px] text-white/40 font-bold uppercase">MTRX_{idx + 1}</span>
                     </div>
                     <div className="space-y-0.5">
-                      <span className={`block font-sans font-black text-2xl ${m.color} tracking-tight`}>{m.val}</span>
-                      <span className="block text-white/60 font-sans text-[10px] font-semibold uppercase">{m.label}</span>
+                      <span className={`block font-inter font-black text-2xl ${m.color} tracking-tight`}>{m.val}</span>
+                      <span className="block text-white/60 font-inter text-[10px] font-semibold uppercase">{m.label}</span>
                     </div>
                   </div>
                 ))}
@@ -1020,7 +1018,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
                 <div className="flex items-center space-x-2 border-b border-white/5 pb-3">
                   <Activity size={16} className="text-cyan-400" />
-                  <h3 className="font-sans font-bold text-sm text-white uppercase tracking-wider">
+                  <h3 className="font-inter font-bold text-sm text-white uppercase tracking-wider">
                     Recent Activity logs (Live-Sync)
                   </h3>
                 </div>
@@ -1036,7 +1034,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         }`}>
                           {act.type.toUpperCase()}
                         </span>
-                        <span className="text-white/70 font-sans">{act.description}</span>
+                        <span className="text-white/70 font-inter">{act.description}</span>
                       </div>
                       <span className="text-[9px] text-white/40">{new Date(act.timestamp).toLocaleTimeString()}</span>
                     </div>
@@ -1054,7 +1052,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {activeTab === "requests" && (
             <div id="admin-tab-requests" className="space-y-6 animate-fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-3">
-                <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
+                <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide">
                   CLIENT PROPOSAL ARCHIVE
                 </h2>
 
@@ -1066,7 +1064,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   )}
                   <button
                     onClick={handleExportCSV}
-                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
+                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-inter font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
                   >
                     <Download size={14} />
                     <span>EXPORT CSV</span>
@@ -1118,8 +1116,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <React.Fragment key={r.id}>
                         <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors leading-relaxed">
                           <td className="p-4">
-                            <span className="block font-sans font-bold text-white text-sm">{r.fullName}</span>
-                            <span className="block font-sans text-xs text-white/50">{r.organizationName || "No Company"}</span>
+                            <span className="block font-inter font-bold text-white text-sm">{r.fullName}</span>
+                            <span className="block font-inter text-xs text-white/50">{r.organizationName || "No Company"}</span>
                             <span className="block font-mono text-[9px] text-white/40 mt-1 uppercase">LOC: {r.city || "?"}, {r.country || "?"}</span>
                           </td>
                           <td className="p-4">
@@ -1127,7 +1125,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                             <span className="block text-white/50">{r.phoneNumber || "No Phone"}</span>
                           </td>
                           <td className="p-4">
-                            <span className="block font-sans font-semibold text-white uppercase">{r.projectType}</span>
+                            <span className="block font-inter font-semibold text-white uppercase">{r.projectType}</span>
                             <span className="block text-purple-400 font-mono text-[10px]">{r.budget}</span>
                           </td>
                           <td className="p-4">
@@ -1175,10 +1173,10 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         </tr>
                         {expandedRequestId === r.id && (
                           <tr className="bg-white/[0.02] border-b border-white/5 animate-fade-in">
-                            <td colSpan={5} className="p-6 text-xs text-white/60 space-y-4 font-sans">
+                            <td colSpan={5} className="p-6 text-xs text-white/60 space-y-4 font-inter">
                               <div className="space-y-1">
                                 <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Project Specification details</span>
-                                <p className="text-white/90 whitespace-pre-wrap font-sans text-xs bg-[#030304] p-4 rounded-xl border border-white/5 leading-relaxed shadow-inner">
+                                <p className="text-white/90 whitespace-pre-wrap font-inter text-xs bg-[#030304] p-4 rounded-xl border border-white/5 leading-relaxed shadow-inner">
                                   {r.description}
                                 </p>
                               </div>
@@ -1259,13 +1257,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {activeTab === "portfolio" && (
             <div id="admin-tab-portfolio" className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
+                <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide">
                   PORTFOLIO LIBRARY & REORDER
                 </h2>
 
                 <button
                   onClick={() => setEditingProject({})}
-                  className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-inter font-bold text-xs uppercase flex items-center space-x-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
                 >
                   <Plus size={14} />
                   <span>ADD PROJECT</span>
@@ -1276,7 +1274,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               {editingProject && (
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-cyan-500/20 space-y-4">
                   <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                    <h3 className="font-sans font-bold text-white uppercase text-xs">
+                    <h3 className="font-inter font-bold text-white uppercase text-xs">
                       {editingProject.id ? "EDIT PORTFOLIO SPECIFICATIONS" : "NEW PORTFOLIO PROJECT SPECIFICATION"}
                     </h3>
                     <button onClick={() => setEditingProject(null)} className="text-white/50 hover:text-white">
@@ -1286,7 +1284,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                   <form onSubmit={handleSaveProject} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-white/70">
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Project Title *</label>
+                      <label className="block font-inter font-bold uppercase">Project Title *</label>
                       <input
                         required
                         type="text"
@@ -1297,7 +1295,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Category *</label>
+                      <label className="block font-inter font-bold uppercase">Category *</label>
                       <select
                         value={editingProject.category || "Commercial"}
                         onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value as any })}
@@ -1310,7 +1308,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="space-y-1.5 sm:col-span-2">
-                      <label className="block font-sans font-bold uppercase">Description *</label>
+                      <label className="block font-inter font-bold uppercase">Description *</label>
                       <textarea
                         required
                         rows={2}
@@ -1321,7 +1319,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Client Name</label>
+                      <label className="block font-inter font-bold uppercase">Client Name</label>
                       <input
                         type="text"
                         value={editingProject.clientName || ""}
@@ -1331,7 +1329,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Duration (e.g., 45s, 5 min)</label>
+                      <label className="block font-inter font-bold uppercase">Duration (e.g., 45s, 5 min)</label>
                       <input
                         type="text"
                         value={editingProject.duration || ""}
@@ -1341,7 +1339,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Thumbnail Unsplash Image URL</label>
+                      <label className="block font-inter font-bold uppercase">Thumbnail Unsplash Image URL</label>
                       <input
                         type="text"
                         placeholder="https://images.unsplash.com/photo-..."
@@ -1353,7 +1351,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                     {/* Secure File Uploader widget */}
                     <div className="space-y-1.5">
-                      <label className="block font-sans font-bold uppercase">Video File Upload (secure node)</label>
+                      <label className="block font-inter font-bold uppercase">Video File Upload (secure node)</label>
                       <div className="flex items-center space-x-2">
                         <input
                           type="file"
@@ -1413,7 +1411,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="submit"
                         disabled={isUploading || isSaving}
-                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
+                        className={`px-6 py-2 rounded-lg font-inter font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
                         {isSaving ? "Saving..." : "Forge Item"}
                       </button>
@@ -1430,7 +1428,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <img src={proj.thumbnail} alt={proj.title} referrerPolicy="no-referrer" className="w-12 h-8 rounded object-cover" />
                       <div className="min-w-0">
                         <span className="font-mono text-[9px] text-cyan-400 uppercase">{proj.category}</span>
-                        <h4 className="font-sans font-bold text-white text-sm truncate">{proj.title}</h4>
+                        <h4 className="font-inter font-bold text-white text-sm truncate">{proj.title}</h4>
                       </div>
                     </div>
 
@@ -1474,13 +1472,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {activeTab === "pdfs" && (
             <div id="admin-tab-documents" className="space-y-6 animate-fade-in">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
+                <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide">
                   DOCUMENTS VAULT (PRICE LISTS, DECKS)
                 </h2>
 
                 <button
                   onClick={() => setEditingPdf({})}
-                  className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-inter font-bold text-xs uppercase flex items-center space-x-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
                 >
                   <Plus size={14} />
                   <span>ADD PDF</span>
@@ -1490,7 +1488,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               {/* Form Dialog for PDFs */}
               {editingPdf && (
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-cyan-500/20 space-y-4 text-xs">
-                  <h3 className="font-sans font-bold text-white uppercase">ADD / EDIT PDF FILE PARAMETERS</h3>
+                  <h3 className="font-inter font-bold text-white uppercase">ADD / EDIT PDF FILE PARAMETERS</h3>
                   
                   <form onSubmit={handleSavePdf} className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-white/70">
                     <div className="space-y-1.5">
@@ -1588,7 +1586,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         onChange={(e) => setEditingPdf({ ...editingPdf, downloadsAllowed: e.target.checked })}
                         className="accent-cyan-500 rounded cursor-pointer"
                       />
-                      <label htmlFor="pdf-downloads-toggle" className="font-sans text-xs text-white/70 cursor-pointer select-none">
+                      <label htmlFor="pdf-downloads-toggle" className="font-inter text-xs text-white/70 cursor-pointer select-none">
                         Allow Client Downloading (if false, clients can only preview/print but cannot download)
                       </label>
                     </div>
@@ -1604,7 +1602,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="submit"
                         disabled={isUploading || isSaving}
-                        className={`px-6 py-2 rounded-lg font-sans font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
+                        className={`px-6 py-2 rounded-lg font-inter font-bold text-black ${isUploading || isSaving ? 'bg-cyan-500/50 cursor-not-allowed' : 'bg-cyan-500 hover:bg-cyan-400'}`}
                       >
                         {isSaving ? "Saving..." : "Commit PDF"}
                       </button>
@@ -1623,7 +1621,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       </div>
                       <div>
                         <span className="font-mono text-[9px] text-cyan-400 uppercase tracking-wider">{docItem.category}</span>
-                        <h4 className="font-sans font-bold text-white text-sm">{docItem.title}</h4>
+                        <h4 className="font-inter font-bold text-white text-sm">{docItem.title}</h4>
                       </div>
                     </div>
 
@@ -1648,7 +1646,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {activeTab === "content" && content && (
             <div id="admin-tab-content" className="space-y-8 animate-fade-in text-xs text-white/70">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
+                <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide">
                   CONTENT STUDIO (IN-LINE EDITOR)
                 </h2>
               </div>
@@ -1656,7 +1654,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <form onSubmit={handleSaveContent} className="space-y-6">
                 {/* 0. Studio Logo Upload */}
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
-                  <h3 className="font-sans font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
+                  <h3 className="font-inter font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
                     STUDIO BRAND LOGO
                   </h3>
 
@@ -1723,7 +1721,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                 {/* 1. Hero text */}
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
-                  <h3 className="font-sans font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
+                  <h3 className="font-inter font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
                     LANDING HERO BRANDING
                   </h3>
 
@@ -1734,7 +1732,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       rows={2}
                       value={content.heroTitle}
                       onChange={(e) => setContent({ ...content, heroTitle: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/10 text-white font-sans font-bold focus:outline-none focus:border-cyan-500/40"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.02] border border-white/10 text-white font-inter font-bold focus:outline-none focus:border-cyan-500/40"
                     />
                   </div>
 
@@ -1752,7 +1750,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                 {/* 2. About page text */}
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
-                  <h3 className="font-sans font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
+                  <h3 className="font-inter font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
                     ABOUT STUDIO SPECS
                   </h3>
 
@@ -1791,7 +1789,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
                 {/* 3. Contact details */}
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
-                  <h3 className="font-sans font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
+                  <h3 className="font-inter font-black text-xs text-white uppercase tracking-wider border-b border-white/5 pb-1">
                     STAGING STACK CHANNELS (CONTACT METRICS)
                   </h3>
 
@@ -1859,7 +1857,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className={`px-8 py-3 rounded-xl font-sans font-black text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
+                    className={`px-8 py-3 rounded-xl font-inter font-black text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
                   >
                     {isSaving ? "SAVING..." : "SAVE ALL TEXT CONFIGS"}
                   </button>
@@ -1872,13 +1870,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           {activeTab === "services" && (
             <div id="admin-tab-services" className="space-y-6 animate-fade-in text-xs text-white/70">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h2 className="font-sans font-black text-xl text-white uppercase tracking-wide">
+                <h2 className="font-inter font-black text-xl text-white uppercase tracking-wide">
                   CAPABILITIES & CORE SERVICES
                 </h2>
                 {!editingService && (
                   <button
                     onClick={() => setEditingService({ iconName: "Film", order: services.length + 1 })}
-                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
+                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-inter font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
                   >
                     <Plus size={14} />
                     <span>ADD NEW SERVICE</span>
@@ -1889,7 +1887,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               {/* SERVICE EDITOR FORM */}
               {editingService && (
                 <div className="p-6 rounded-2xl bg-[#0a0a0c] border border-white/5 space-y-4">
-                  <h3 className="font-sans font-black text-xs text-cyan-400 uppercase tracking-wider border-b border-white/5 pb-2">
+                  <h3 className="font-inter font-black text-xs text-cyan-400 uppercase tracking-wider border-b border-white/5 pb-2">
                     {editingService.id ? "EDIT SERVICE CAPABILITY" : "CREATE NEW SERVICE CAPABILITY"}
                   </h3>
 
@@ -1977,7 +1975,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         rows={4}
                         value={editingService.fullDescription || ""}
                         onChange={(e) => setEditingService({ ...editingService, fullDescription: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-white/[0.02] border border-white/10 text-white focus:outline-none focus:border-cyan-500/40 leading-relaxed font-sans text-xs"
+                        className="w-full px-3 py-2 rounded-lg bg-white/[0.02] border border-white/10 text-white focus:outline-none focus:border-cyan-500/40 leading-relaxed font-inter text-xs"
                         placeholder="Provide an immersive 40-60 words detailed paragraph about your post-production workflow, sound engineering, and creative methods for this service. This pops open with smooth animations when clicked."
                       />
                     </div>
@@ -1994,7 +1992,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="submit"
                         disabled={isSaving}
-                        className={`px-6 py-2 rounded-lg font-sans font-bold text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
+                        className={`px-6 py-2 rounded-lg font-inter font-bold text-xs uppercase transition-all ${isSaving ? 'bg-cyan-500/50 text-black/50 cursor-not-allowed' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer'}`}
                       >
                         {isSaving ? "Saving..." : "Save Capability"}
                       </button>
@@ -2006,7 +2004,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               {/* SERVICES LISTING */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                  <h3 className="font-sans font-bold text-xs text-white uppercase tracking-wider">
+                  <h3 className="font-inter font-bold text-xs text-white uppercase tracking-wider">
                     CURRENT SERVICE ITEMS
                   </h3>
                   <span className="font-mono text-[9px] text-white/50">{services.length} SAVED</span>
@@ -2023,7 +2021,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                           <span className="font-mono text-[10px] text-white/40 font-bold px-1.5 py-0.5 rounded bg-white/[0.02] border border-white/5">
                             ORD_{srv.order}
                           </span>
-                          <span className="font-sans font-bold text-sm text-cyan-400 uppercase tracking-wide">
+                          <span className="font-inter font-bold text-sm text-cyan-400 uppercase tracking-wide">
                             {srv.title}
                           </span>
                           <span className="font-mono text-[8px] font-black px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 uppercase tracking-wider">
@@ -2088,7 +2086,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <p className="text-white/50 text-sm">No capabilities/services in the database yet.</p>
                       <button
                         onClick={() => setEditingService({ iconName: "Film", order: 1 })}
-                        className="mt-3 px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase cursor-pointer inline-flex items-center gap-1"
+                        className="mt-3 px-4 py-2 rounded-lg bg-cyan-500 text-black font-inter font-bold text-xs uppercase cursor-pointer inline-flex items-center gap-1"
                       >
                         <Plus size={12} /> Add First Service
                       </button>
@@ -2105,13 +2103,13 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       {saveSuccessMsg && (
         <div className="fixed bottom-4 right-4 bg-green-500/10 text-green-400 border border-green-500/20 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 z-50 backdrop-blur-md animate-fade-in">
           <CheckCircle size={18} />
-          <span className="font-sans font-medium text-sm">{saveSuccessMsg}</span>
+          <span className="font-inter font-medium text-sm">{saveSuccessMsg}</span>
         </div>
       )}
       {saveError && (
         <div className="fixed bottom-4 right-4 bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 z-50 backdrop-blur-md animate-fade-in">
           <AlertTriangle size={18} />
-          <span className="font-sans font-medium text-sm">{saveError}</span>
+          <span className="font-inter font-medium text-sm">{saveError}</span>
         </div>
       )}
     </div>

@@ -44,7 +44,7 @@ export default function ServicesSection() {
       <section id="services" className="relative py-36 px-6 flex justify-center items-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-5 h-5 border border-zinc-500 border-t-white rounded-full animate-spin" />
-          <p className="font-sans font-bold text-[9px] uppercase tracking-[0.25em] text-white/50">Loading Capabilities...</p>
+          <p className="font-mono font-medium text-[9px] uppercase tracking-[0.25em] text-white/50">Loading Capabilities...</p>
         </div>
       </section>
     );
@@ -59,10 +59,10 @@ export default function ServicesSection() {
         
         {/* Section Header */}
         <div id="services-header" className="text-center max-w-2xl mx-auto space-y-6">
-          <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
+          <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
             CORE SERVICES
           </span>
-          <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+          <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
             Creative Capabilities
           </h2>
           <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] tracking-wide">
@@ -90,13 +90,13 @@ export default function ServicesSection() {
                     <div className="p-2.5 rounded-full bg-white/5 border border-white/10">
                       {getIcon(srv.iconName)}
                     </div>
-                    <span className="font-sans font-medium text-[11px] px-2.5 py-0.5 rounded-full border border-white/10 bg-white/5 text-white/60 uppercase tracking-[0.08em]">
+                    <span className="font-mono font-medium text-[10px] px-2 py-1 rounded-sm bg-white/5 border border-white/10 text-white/60 uppercase tracking-[0.1em]">
                       {srv.badge}
                     </span>
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="font-sans font-medium text-[15px] text-white uppercase tracking-[0.08em] group-hover:text-white/80 transition-colors">
+                    <h3 className="font-display font-medium text-[20px] text-white tracking-tight group-hover:text-white/80 transition-colors">
                       {srv.title}
                     </h3>
                     <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">

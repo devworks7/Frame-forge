@@ -194,7 +194,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-sans font-medium text-[22px] sm:text-[28px] text-white tracking-tight font-normal leading-tight">
+                <h3 className="font-display font-medium text-[22px] sm:text-[28px] text-white tracking-tight font-normal leading-tight">
                   Proposal Submitted
                 </h3>
                 <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
@@ -211,7 +211,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
               <button
                 onClick={onClose}
-                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase transition-all cursor-pointer"
+                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-display font-medium text-[15px] tracking-wide transition-all cursor-pointer"
               >
                 Return to Studio
               </button>
@@ -228,14 +228,14 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               
               {/* Form Category headers */}
               <div className="space-y-6">
-                <h3 className="font-sans font-medium text-[11px] text-white/50 tracking-[0.08em] uppercase border-b border-white/5 pb-2">
+                <h3 className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase border-b border-white/5 pb-2">
                   01 / Personal Details
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Full Name */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Full Name *</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Full Name *</label>
                     <input
                       required
                       type="text"
@@ -243,26 +243,26 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       placeholder="e.g., Julien Moreau"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
 
                   {/* Organization */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Organization Name</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Organization Name</label>
                     <input
                       type="text"
                       name="organizationName"
                       value={formData.organizationName}
                       onChange={handleInputChange}
                       placeholder="e.g., Moreau Media Group"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
 
                   {/* Email */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Email Address *</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Email Address *</label>
                     <input
                       required
                       type="email"
@@ -270,46 +270,46 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="e.g., julien@moreau.com"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Phone Number</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Phone Number</label>
                     <input
                       type="tel"
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
                       placeholder="e.g., +33 6 1234 5678"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
 
                   {/* Country */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Country</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Country</label>
                     <input
                       type="text"
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
                       placeholder="e.g., France"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
 
                   {/* City */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">City</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">City</label>
                     <input
                       type="text"
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
                       placeholder="e.g., Paris"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
                     />
                   </div>
                 </div>
@@ -317,19 +317,19 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
               {/* Form parameters 2 */}
               <div className="space-y-6">
-                <h3 className="font-sans font-medium text-[11px] text-white/50 tracking-[0.08em] uppercase border-b border-white/5 pb-2">
+                <h3 className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase border-b border-white/5 pb-2">
                   02 / Project specifications
                 </h3>
 
                 <div>
                   {/* Project Type */}
                   <div className="space-y-2">
-                    <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Project Type *</label>
+                    <label className="block font-sans text-[13px] text-white/70 mb-1.5">Project Type *</label>
                     <select
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-inter text-[13px]"
                     >
                       {projectTypes.map((t) => (
                         <option key={t} value={t} className="bg-zinc-950 text-white">{t}</option>
@@ -340,7 +340,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <label className="block font-sans font-medium text-[11px] text-white/50 uppercase tracking-[0.08em]">Project Description *</label>
+                  <label className="block font-sans text-[13px] text-white/70 mb-1.5">Project Description *</label>
                   <textarea
                     required
                     name="description"
@@ -348,7 +348,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Describe your vision, core pacing direction, reference examples, and master preferences..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-sans text-[13px]"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-inter text-[13px]"
                   />
                 </div>
               </div>
@@ -381,7 +381,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-8 py-3.5 rounded-full font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
+                  className={`px-8 py-3.5 rounded-full font-display font-medium text-[15px] tracking-wide flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
                     isSubmitting
                       ? "bg-white/5 text-white/50 cursor-not-allowed border border-white/5"
                       : "liquid-glass text-white border-white/10 hover:bg-white/10"

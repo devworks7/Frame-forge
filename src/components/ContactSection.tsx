@@ -16,10 +16,10 @@ export default function ContactSection({ content }: ContactProps) {
         
         {/* Section Header */}
         <div id="contact-header" className="text-center max-w-2xl mx-auto space-y-6">
-          <span className="font-sans font-medium text-[12px] tracking-[0.12em] text-white/50 uppercase block animate-opacity-fade">
+          <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
             GET IN TOUCH
           </span>
-          <h2 className="font-serif text-[42px] md:text-[56px] text-white font-normal leading-[1.05] tracking-tight animate-fade-rise">
+          <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
             Connect With Us
           </h2>
           <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl mx-auto">
@@ -44,7 +44,7 @@ export default function ContactSection({ content }: ContactProps) {
                   <Mail size={18} />
                 </div>
                 <div className="space-y-1.5">
-                  <span className="block font-sans font-medium text-[11px] uppercase tracking-[0.08em] text-white/50">
+                  <span className="block font-mono font-medium text-[10px] uppercase tracking-[0.15em] text-white/50">
                     Direct Email
                   </span>
                   <span className="block font-sans font-light text-[15px] sm:text-[17px] text-white group-hover:text-white/80 transition-colors break-all">
@@ -56,7 +56,7 @@ export default function ContactSection({ content }: ContactProps) {
 
             {/* Social Links Strip */}
             <div className="p-6 rounded-xl liquid-glass border border-white/5 space-y-4">
-              <span className="block font-sans font-medium text-[11px] uppercase tracking-[0.08em] text-white/50">
+              <span className="block font-mono font-medium text-[10px] uppercase tracking-[0.15em] text-white/50">
                 Social Presence
               </span>
               <div className="flex items-center space-x-3">

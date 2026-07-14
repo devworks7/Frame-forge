@@ -28,7 +28,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           id="hero-badge"
           className="inline-flex items-center space-x-2.5 px-5 py-2 rounded-full liquid-glass animate-opacity-fade"
         >
-          <span className="font-sans font-medium text-[12px] tracking-[0.3em] text-white/60 uppercase">
+          <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/60 uppercase">
             CREATIVE STUDIO
           </span>
         </div>
@@ -37,7 +37,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
         <div className="space-y-8">
           <h1
             id="hero-headline"
-            className="font-serif text-[42px] sm:text-[56px] md:text-[72px] lg:text-[110px] text-white font-normal leading-[0.95] tracking-[-0.04em] animate-fade-rise"
+            className="font-display font-medium text-[42px] sm:text-[56px] md:text-[72px] lg:text-[110px] text-white leading-[0.95] tracking-[-0.04em] animate-fade-rise"
             dangerouslySetInnerHTML={{ __html: content?.heroTitle || 'We forge <span className="block sm:inline">experiences.</span>' }}
           />
           
@@ -59,7 +59,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           <button
             id="hero-cta-start"
             onClick={onOpenRequests}
-            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
+            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-display font-medium text-[16px] tracking-wide flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
           >
             <span>Start Your Project</span>
             <ArrowUpRight size={14} />
@@ -69,7 +69,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
           <button
             id="hero-cta-portfolio"
             onClick={() => scrollToSection("portfolio")}
-            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-sans font-semibold text-[14px] tracking-[0.08em] uppercase flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
+            className="w-full sm:w-auto px-8 py-4 rounded-full liquid-glass hover-lift text-white font-display font-medium text-[16px] tracking-wide flex items-center justify-center space-x-3 interactive cursor-pointer hover:bg-white/10 transition-all duration-300"
           >
             <Film size={13} className="text-white/70" />
             <span>Watch Portfolio</span>
@@ -83,7 +83,7 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
         onClick={() => scrollToSection("portfolio")}
         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-3 cursor-pointer group z-20"
       >
-        <span className="font-sans font-bold text-[8px] tracking-[0.3em] text-white/50 group-hover:text-white uppercase transition-colors duration-300">
+        <span className="font-mono font-medium text-[9px] tracking-[0.25em] text-white/50 group-hover:text-white uppercase transition-colors duration-300">
           Scroll to explore
         </span>
         <div className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center group-hover:bg-white/15 transition-all duration-300 shadow-sm">
