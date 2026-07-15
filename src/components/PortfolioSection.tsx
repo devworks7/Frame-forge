@@ -26,24 +26,13 @@ export default function PortfolioSection() {
 
   useEffect(() => {
     if (selectedProject) {
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
     } else {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
+      document.body.style.overflow = '';
     }
     
     return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.body.style.overflow = '';
     };
   }, [selectedProject]);
 
@@ -136,6 +125,7 @@ export default function PortfolioSection() {
                   src={proj.thumbnail || "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop&q=80"}
                   alt={proj.title}
                   loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover transform scale-100 group-hover:scale-103 transition-transform duration-500"
                 />
@@ -230,6 +220,7 @@ export default function PortfolioSection() {
               <video
                 ref={videoRef}
                 src={selectedProject.videoUrl}
+                poster={selectedProject.thumbnail}
                 controls
                 controlsList="nodownload nofullscreen noremoteplayback"
                 disablePictureInPicture

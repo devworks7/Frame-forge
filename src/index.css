@@ -50,7 +50,6 @@ html {
 
 body {
   font-family: var(--font-sans);
-  overflow-x: hidden;
   background-color: hsl(201 100% 13%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -143,18 +142,22 @@ body {
 
 .animate-fade-rise {
   animation: fadeRise 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .animate-opacity-fade {
   animation: opacityFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
 .animate-subtle-scale {
   animation: subtleScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .hover-lift {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+  will-change: transform;
 }
 
 .hover-lift:hover {

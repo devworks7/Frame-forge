@@ -9,7 +9,7 @@ export default function AboutSection({ content }: AboutProps) {
   return (
     <section
       id="about"
-      className="relative py-32 sm:py-40 px-6 sm:px-12 lg:px-24 overflow-hidden"
+      className="relative py-32 sm:py-40 px-6 sm:px-12 lg:px-24 overflow-clip"
     >
       <div className="max-w-7xl mx-auto">
         

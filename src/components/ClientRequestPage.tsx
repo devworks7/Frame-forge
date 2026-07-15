@@ -9,10 +9,7 @@ interface ClientRequestPageProps {
 
 export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
   useEffect(() => {
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
     
     // Add history API for back button
     window.history.pushState({ modalOpen: true }, '');
@@ -23,13 +20,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
     window.addEventListener('popstate', handlePopState);
     
     return () => {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
+      document.body.style.overflow = '';
       window.removeEventListener('popstate', handlePopState);
     };
   }, [onClose]);
@@ -185,7 +176,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
   return (
     <div id="request-page-root" className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex justify-center md:items-start py-0 px-0 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] sm:pt-12 sm:pb-12 sm:px-6 animate-opacity-fade">
-      <div className="max-w-3xl w-full min-h-screen sm:min-h-0 sm:rounded-2xl liquid-glass border-0 sm:border border-white/10 shadow-2xl relative overflow-hidden animate-subtle-scale bg-[#080d12]/95">
+      <div className="max-w-3xl w-full min-h-[100dvh] sm:min-h-0 sm:rounded-2xl liquid-glass border-0 sm:border border-white/10 shadow-2xl relative overflow-hidden animate-subtle-scale bg-[#080d12]/95">
         
         {/* Header Ribbon */}
         <div className="flex items-center justify-between p-6 sm:p-8 border-b border-white/10 bg-black/40">

@@ -726,7 +726,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   // LOGIN SCREEN RENDER (IF NOT AUTHENTICATED)
   if (!isAuthenticated) {
     return (
-      <div id="admin-login-overlay" className="fixed inset-0 z-50 overflow-y-auto bg-black flex justify-center items-center px-4">
+      <div id="admin-login-overlay" className="fixed inset-0 z-50 overflow-y-auto bg-black flex justify-center sm:items-center items-start py-8 sm:py-0 px-4">
         <div className="max-w-md w-full rounded-3xl bg-[#0a0a0c] border border-white/5 p-8 space-y-8 shadow-2xl relative overflow-hidden">
           {/* Neon background overlays */}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -808,7 +808,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   // FORCE CHANGE DEFAULT PASSWORD DIALOGUE
   if (mustChangePassword) {
     return (
-      <div id="admin-change-password-overlay" className="fixed inset-0 z-50 bg-black flex justify-center items-center px-4">
+      <div id="admin-change-password-overlay" className="fixed inset-0 z-50 overflow-y-auto bg-black flex justify-center sm:items-center items-start py-8 sm:py-0 px-4">
         <div className="max-w-md w-full rounded-3xl bg-[#0a0a0c] border border-white/5 p-8 space-y-6 shadow-2xl">
           <div className="text-center space-y-2">
             <div className="inline-flex p-4 rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20">

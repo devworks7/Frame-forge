@@ -18,10 +18,10 @@ export default function Hero({ content, onOpenRequests }: HeroProps) {
   return (
     <section
       id="hero-section"
-      className="relative min-h-screen flex flex-col justify-center items-center px-6 sm:px-12 lg:px-20 overflow-hidden py-32"
+      className="relative min-h-[100dvh] flex flex-col items-center px-6 sm:px-12 lg:px-20 overflow-clip py-32 sm:py-40"
     >
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto text-center space-y-16 z-10">
+      <div className="max-w-5xl mx-auto text-center space-y-16 z-10 my-auto">
         
         {/* Luxury Micro-Badge */}
         <div

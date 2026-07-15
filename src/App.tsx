@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { ArrowUp, Sparkles, Mail, ShieldAlert, Star } from "lucide-react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import { Sparkles, Mail, ShieldAlert, Star } from "lucide-react";
 import ThreeBackground from "./components/ThreeBackground";
 import CustomCursor from "./components/CustomCursor";
 import Navbar from "./components/Navbar";
 import Logo from "./components/Logo";
 import Hero from "./components/Hero";
-import AboutSection from "./components/AboutSection";
-import ServicesSection from "./components/ServicesSection";
-import PortfolioSection from "./components/PortfolioSection";
-import ContactSection from "./components/ContactSection";
-import PricingDocuments from "./components/PricingDocuments";
-import ClientRequestPage from "./components/ClientRequestPage";
-import AdminPanel from "./components/AdminPanel";
+
+const AboutSection = lazy(() => import("./components/AboutSection"));
+const ServicesSection = lazy(() => import("./components/ServicesSection"));
+const PortfolioSection = lazy(() => import("./components/PortfolioSection"));
+const ContactSection = lazy(() => import("./components/ContactSection"));
+const PricingDocuments = lazy(() => import("./components/PricingDocuments"));
+const ClientRequestPage = lazy(() => import("./components/ClientRequestPage"));
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
+
+import ScrollToTop from "./components/ScrollToTop";
 
 import { SectionContent } from "./types";
 import {
@@ -33,49 +36,22 @@ export default function App() {
   const [loadProgress, setLoadProgress] = useState(0);
   const [isVideoPreloaded, setIsVideoPreloaded] = useState(false);
 
-  // Scroll to Top state
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  
-
   // Initialize and Seed Firestore on Mount
   useEffect(() => {
+    let isMounted = true;
     async function init() {
       await checkInitialSeed();
       const c = await getSectionContent();
-      setSiteContent(c);
+      if (isMounted) {
+        setSiteContent(c);
+        setIsLoading(false);
+      }
 
       await incrementAnalytics("totalVisitors");
       await logActivity("visit", "A visitor entered the creative studio.");
 
-      // Preload critical background video
-      const preloadVideo = () => {
-        return new Promise<void>((resolve) => {
-          const video = document.createElement("video");
-          video.src = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4";
-          video.preload = "auto";
-          video.muted = true;
-          video.playsInline = true;
-
-          const done = () => {
-            video.removeEventListener("canplaythrough", done);
-            video.removeEventListener("error", done);
-            setIsVideoPreloaded(true);
-            resolve();
-          };
-
-          video.addEventListener("canplaythrough", done);
-          video.addEventListener("error", done);
-
-          if (video.readyState >= 3) {
-            done();
-          }
-
-          // Safety timeout of 2 seconds so the loader never hangs
-          setTimeout(done, 2000);
-        });
-      };
-      preloadVideo();
+      // Background video doesn't need to block render
+      setIsVideoPreloaded(true);
 
       // Restore active admin sessions on mount
       const adminToken = localStorage.getItem("ff_admin_token");
@@ -87,7 +63,7 @@ export default function App() {
             body: JSON.stringify({ token: adminToken }),
           });
           const d = await res.json();
-          if (d.valid) {
+          if (d.valid && isMounted) {
             setIsAdminLoggedIn(true);
           } else {
             localStorage.removeItem("ff_admin_token");
@@ -98,7 +74,24 @@ export default function App() {
       }
     }
     init();
+    return () => { isMounted = false; };
   }, []);
+
+  // Cinematic countdown loader simulation
+  useEffect(() => {
+    if (loadProgress < 100 && isLoading) {
+      const interval = setInterval(() => {
+        setLoadProgress((prev) => {
+          const step = Math.floor(Math.random() * 25) + 15;
+          const next = prev + step;
+          return next > 99 ? 99 : next;
+        });
+      }, 50);
+      return () => clearInterval(interval);
+    } else if (!isLoading) {
+      setLoadProgress(100);
+    }
+  }, [loadProgress, isLoading]);
 
   // Check for admin query parameter or hash to open console automatically
   useEffect(() => {
@@ -113,44 +106,23 @@ export default function App() {
     return () => window.removeEventListener("hashchange", checkAdminParam);
   }, []);
 
-  // Cinematic countdown loader simulation
-  useEffect(() => {
-    if (loadProgress < 100) {
-      const interval = setInterval(() => {
-        setLoadProgress((prev) => {
-          const step = Math.floor(Math.random() * 15) + 5;
-          const next = prev + step;
-          return next > 100 ? 100 : next;
-        });
-      }, 80);
-      return () => clearInterval(interval);
-    }
-  }, [loadProgress]);
-
-  // Handle transition immediately when loader is complete and critical assets/data are ready
-  useEffect(() => {
-    if (loadProgress === 100 && siteContent !== null && isVideoPreloaded) {
-      setIsLoading(false);
-    }
-  }, [loadProgress, siteContent, isVideoPreloaded]);
-
-  // Track scroll position for scroll-to-top button
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const handleOpenRequests = React.useCallback(() => setShowRequests(true), []);
+  const handleOpenAdmin = React.useCallback(() => setShowAdmin(true), []);
+  const handleLogoutAdmin = React.useCallback(() => {
+    localStorage.removeItem("ff_admin_token");
+    setIsAdminLoggedIn(false);
+    logActivity("visit", "Admin disconnected session.");
   }, []);
+  const handleCloseVideo = React.useCallback(() => window.dispatchEvent(new CustomEvent("close-video")), []);
 
-  const handlePageChange = (page: "home" | "pricing" | "proposal") => {
+  const handlePageChange = React.useCallback((page: "home" | "pricing" | "proposal") => {
     if (page === "proposal") {
       setShowRequests(true);
     } else {
       setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, []);
 
   if (isLoading) {
     return (
@@ -189,7 +161,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070b0e] text-white selection:bg-white selection:text-black font-sans relative overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-[#070b0e] text-white selection:bg-white selection:text-black font-sans relative overflow-x-clip">
       
       {/* Absolute Viewport Background Video */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -198,6 +170,7 @@ export default function App() {
           muted
           loop
           playsInline
+          preload="metadata"
           className="w-full h-full object-cover opacity-35"
         >
           <source
@@ -216,16 +189,7 @@ export default function App() {
       <CustomCursor />
 
       {/* Floating Widgets */}
-      {/* Scroll to Top */}
-      {showScrollTop && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 p-3.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 shadow-lg z-30 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 cursor-pointer interactive bg-[#070b0e]/40"
-          title="Back to top"
-        >
-          <ArrowUp size={16} />
-        </button>
-      )}
+      <ScrollToTop />
 
       {/* Quick Action Email Button (Refined Liquid Glass look) */}
       <a
@@ -240,50 +204,50 @@ export default function App() {
 
       {/* Main sticky navigation header */}
       <Navbar
-        onOpenRequests={() => setShowRequests(true)}
-        onOpenAdmin={() => setShowAdmin(true)}
+        onOpenRequests={handleOpenRequests}
+        onOpenAdmin={handleOpenAdmin}
         isAdminLoggedIn={isAdminLoggedIn}
-        onLogoutAdmin={() => {
-          localStorage.removeItem("ff_admin_token");
-          setIsAdminLoggedIn(false);
-          logActivity("visit", "Admin disconnected session.");
-        }}
+        onLogoutAdmin={handleLogoutAdmin}
         currentPage={currentPage}
         setCurrentPage={handlePageChange}
-        onCloseVideo={() => window.dispatchEvent(new CustomEvent("close-video"))}
+        onCloseVideo={handleCloseVideo}
       />
 
       {/* Core Pages Routing layout */}
       <main id="main-content-flow" className="relative z-10">
-        {currentPage === "home" ? (
-          /* HOMEPAGE - LANDING EXPERIENCE */
-          siteContent && (
-            <div className="space-y-0">
-              <Hero content={siteContent} onOpenRequests={() => setShowRequests(true)} />
-              <PortfolioSection />
-              <ServicesSection />
-              <AboutSection content={siteContent} />
-              <ContactSection content={siteContent} />
-            </div>
-          )
-        ) : (
-          /* PRICING & DOCUMENTS PAGE */
-          <PricingDocuments />
-        )}
+        <Suspense fallback={null}>
+          {currentPage === "home" ? (
+            /* HOMEPAGE - LANDING EXPERIENCE */
+            siteContent && (
+              <div className="space-y-0">
+                <Hero content={siteContent} onOpenRequests={handleOpenRequests} />
+                <PortfolioSection />
+                <ServicesSection />
+                <AboutSection content={siteContent} />
+                <ContactSection content={siteContent} />
+              </div>
+            )
+          ) : (
+            /* PRICING & DOCUMENTS PAGE */
+            <PricingDocuments />
+          )}
+        </Suspense>
       </main>
 
       {/* Modals & Overlays portals */}
-      {showRequests && <ClientRequestPage onClose={() => setShowRequests(false)} />}
-      
-      {showAdmin && (
-        <AdminPanel
-          onClose={() => setShowAdmin(false)}
-          onLoginStateChange={(status) => {
-            setIsAdminLoggedIn(status);
-            getSectionContent().then((c) => setSiteContent(c));
-          }}
-        />
-      )}
+      <Suspense fallback={null}>
+        {showRequests && <ClientRequestPage onClose={() => setShowRequests(false)} />}
+        
+        {showAdmin && (
+          <AdminPanel
+            onClose={() => setShowAdmin(false)}
+            onLoginStateChange={(status) => {
+              setIsAdminLoggedIn(status);
+              getSectionContent().then((c) => setSiteContent(c));
+            }}
+          />
+        )}
+      </Suspense>
 
       {/* Beautiful styled Footer */}
       <footer id="main-footer" className="relative border-t border-white/5 bg-transparent py-16 px-6 text-white/40 z-10">

@@ -13,7 +13,7 @@ interface NavbarProps {
   onCloseVideo?: () => void;
 }
 
-export default function Navbar({
+export default React.memo(function Navbar({
   onOpenRequests,
   onOpenAdmin,
   isAdminLoggedIn,
@@ -55,23 +55,12 @@ export default function Navbar({
   // Prevent background scrolling on open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
     } else {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
+      document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
 
@@ -341,12 +330,12 @@ export default function Navbar({
             animate="visible"
             exit="hidden"
             onClick={handleBackdropClick}
-            className="fixed inset-0 z-40 bg-[#070b0e]/98 backdrop-blur-2xl flex flex-col justify-between pt-[calc(6.5rem+env(safe-area-inset-top))] pb-[calc(2.5rem+env(safe-area-inset-bottom))] px-6 sm:px-12 md:hidden overflow-y-auto"
+            className="fixed inset-0 z-40 bg-[#070b0e]/98 backdrop-blur-2xl flex flex-col justify-start pt-[calc(6.5rem+env(safe-area-inset-top))] pb-[calc(2.5rem+env(safe-area-inset-bottom))] px-6 sm:px-12 md:hidden overflow-y-auto"
           >
             {/* Ambient Animated Cinematic Glow Background */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-white/[0.03] blur-[100px] pointer-events-none" />
 
-            <div className="flex flex-col space-y-10 my-auto">
+            <div className="flex flex-col space-y-8 py-8 w-full">
               <span className="font-mono text-[9px] text-white/30 tracking-[0.25em] uppercase text-center block">
                 FRAME FORGE NAVIGATION
               </span>
@@ -437,4 +426,4 @@ export default function Navbar({
       </AnimatePresence>
     </div>
   );
-}
+});
