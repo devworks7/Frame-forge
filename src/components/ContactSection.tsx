@@ -19,7 +19,7 @@ export default function ContactSection({ content }: ContactProps) {
           <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
             GET IN TOUCH
           </span>
-          <h2 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
+          <h2 className="font-display font-normal text-[32px] md:text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
             Connect With Us
           </h2>
           <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-2xl mx-auto">

@@ -55,12 +55,23 @@ export default function Navbar({
   // Prevent background scrolling on open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
     } else {
-      document.body.style.overflow = "";
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
     };
   }, [isMobileMenuOpen]);
 
@@ -292,7 +303,7 @@ export default function Navbar({
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu-overlay"
             onClick={toggleMobileMenu}
-            className="flex md:hidden items-center justify-center w-11 h-11 rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 hover:scale-105 active:scale-95 transition-all duration-300 z-50 relative cursor-pointer"
+            className="flex md:hidden items-center justify-center min-w-[44px] min-h-[44px] rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 hover:scale-105 active:scale-95 transition-all duration-300 z-50 relative cursor-pointer"
           >
             <div className="w-5 h-4 flex flex-col justify-between relative">
               <span

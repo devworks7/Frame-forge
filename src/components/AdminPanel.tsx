@@ -860,9 +860,9 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
   // MAIN DASHBOARD CONSOLE RENDER
   return (
-    <div id="admin-dashboard-overlay" className="fixed inset-0 z-50 bg-[#060608] flex flex-col">
+    <div id="admin-dashboard-overlay" className="fixed inset-0 z-50 bg-[#060608] flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* Top Console ribbon */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0a0a0c]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 border-b border-white/5 bg-[#0a0a0c] gap-4 sm:gap-0">
         <div className="flex items-center space-x-3">
           <div className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
           <div>
@@ -876,7 +876,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         </div>
 
         {/* Console CTAs */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
           <button
             onClick={() => {
               localStorage.removeItem("ff_admin_token");
@@ -1664,7 +1664,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
                       <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-black ${docItem.downloadsAllowed ? "bg-green-950 text-green-400" : "bg-red-950 text-red-400"}`}>
                         {docItem.downloadsAllowed ? "DL_ALLOWED" : "DL_LOCKED"}
                       </span>

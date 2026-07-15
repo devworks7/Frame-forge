@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, X, CheckCircle, FileText, Send, ShieldCheck, Sparkles } from "lucide-react";
 import { ClientRequest } from "../types.js";
 import { saveClientRequest, incrementAnalytics, logActivity } from "../lib/dataService.js";
@@ -8,6 +8,32 @@ interface ClientRequestPageProps {
 }
 
 export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    
+    // Add history API for back button
+    window.history.pushState({ modalOpen: true }, '');
+    const handlePopState = () => {
+      // It's already popped, just call onClose
+      onClose();
+    };
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [onClose]);
+
   const [formData, setFormData] = useState({
     fullName: "",
     organizationName: "",
@@ -158,8 +184,8 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
   };
 
   return (
-    <div id="request-page-root" className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex justify-center items-start py-12 px-6 animate-opacity-fade">
-      <div className="max-w-3xl w-full rounded-2xl liquid-glass border border-white/10 shadow-2xl relative overflow-hidden animate-subtle-scale bg-[#080d12]/95">
+    <div id="request-page-root" className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex justify-center md:items-start py-0 px-0 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] sm:pt-12 sm:pb-12 sm:px-6 animate-opacity-fade">
+      <div className="max-w-3xl w-full min-h-screen sm:min-h-0 sm:rounded-2xl liquid-glass border-0 sm:border border-white/10 shadow-2xl relative overflow-hidden animate-subtle-scale bg-[#080d12]/95">
         
         {/* Header Ribbon */}
         <div className="flex items-center justify-between p-6 sm:p-8 border-b border-white/10 bg-black/40">
@@ -177,8 +203,8 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
             </div>
           </div>
           <button
-            onClick={onClose}
-            className="p-2 rounded-full liquid-glass hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer border border-white/5"
+            onClick={() => { window.history.back(); }}
+            className="p-3 md:p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full liquid-glass hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer border border-white/5"
           >
             <X size={14} />
           </button>
@@ -210,7 +236,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               </div>
 
               <button
-                onClick={onClose}
+                onClick={() => { window.history.back(); }}
                 className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase transition-all cursor-pointer"
               >
                 Return to Studio

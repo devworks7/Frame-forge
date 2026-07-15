@@ -220,7 +220,7 @@ export default function App() {
       {showScrollTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 p-3 rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 shadow-lg z-30 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 cursor-pointer interactive bg-[#070b0e]/40"
+          className="fixed bottom-6 right-6 p-3.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 shadow-lg z-30 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 cursor-pointer interactive bg-[#070b0e]/40"
           title="Back to top"
         >
           <ArrowUp size={16} />
@@ -230,7 +230,7 @@ export default function App() {
       {/* Quick Action Email Button (Refined Liquid Glass look) */}
       <a
         href={`mailto:${siteContent?.contactEmail || "frameforgestudios.001@gmail.com"}`}
-        className="fixed bottom-6 left-6 p-3.5 rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 shadow-lg z-30 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer interactive flex items-center justify-center bg-[#070b0e]/40"
+        className="fixed bottom-6 left-6 p-3.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full liquid-glass border border-white/10 text-white hover:text-white/70 shadow-lg z-30 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer interactive bg-[#070b0e]/40"
         title="Direct Email to Studio"
       >
         <Mail size={16} />

@@ -25,6 +25,29 @@ export default function PortfolioSection() {
   }, []);
 
   useEffect(() => {
+    if (selectedProject) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+    
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [selectedProject]);
+
+  useEffect(() => {
     if (!selectedProject) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -41,7 +64,26 @@ export default function PortfolioSection() {
     await logActivity("video_view", `Watched video stream: "${proj.title}"`);
   };
 
-  const handleCloseProject = () => {
+  useEffect(() => {
+    if (selectedProject) {
+      window.history.pushState({ modalOpen: true }, '');
+    }
+  }, [selectedProject]);
+
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (selectedProject) {
+        handleCloseProject(true);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [selectedProject]);
+
+  const handleCloseProject = (fromPopState = false) => {
+    if (!fromPopState && window.history.state?.modalOpen) { 
+      window.history.back(); 
+    }
     setSelectedProject(null);
   };
 
@@ -154,19 +196,19 @@ export default function PortfolioSection() {
             }
           }}
           tabIndex={0}
-          className="fixed inset-x-0 bottom-0 top-20 z-40 flex flex-col justify-center bg-[#0a0e13]/95 backdrop-blur-md overflow-y-auto"
+          className="fixed inset-0 z-[100] flex flex-col md:justify-center bg-black md:bg-[#0a0e13]/95 backdrop-blur-md overflow-y-auto pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:pt-0 md:pb-0 md:top-20 md:z-40"
         >
           {/* Top Panel */}
-          <div className="flex items-center justify-between p-6 border-b border-white/10 bg-black/40">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/10 bg-black/40 sticky top-0 z-10 shrink-0 md:static">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-full bg-white/5 border border-white/10">
+              <div className="hidden md:flex p-2 rounded-full bg-white/5 border border-white/10">
                 <Film className="text-white" size={12} />
               </div>
               <div>
-                <h4 className="font-display font-medium text-[24px] text-white tracking-tight leading-none">
+                <h4 className="font-display font-medium text-[16px] md:text-[24px] text-white tracking-tight leading-none line-clamp-1">
                   {selectedProject.title}
                 </h4>
-                <p className="font-mono text-[10px] text-white/40 tracking-widest uppercase">
+                <p className="font-mono text-[8px] md:text-[10px] text-white/40 tracking-widest uppercase hidden md:block">
                   Cinematic Preview // Secure Stream
                 </p>
               </div>
@@ -174,9 +216,9 @@ export default function PortfolioSection() {
             
             <button
               onClick={handleCloseProject}
-              className="p-2 rounded-full liquid-glass hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer shadow-sm"
+              className="p-3 md:p-2 rounded-full bg-white/10 hover:bg-white/20 md:liquid-glass md:hover:bg-white/10 text-white transition-all cursor-pointer shadow-sm flex items-center justify-center min-w-[44px] min-h-[44px]"
             >
-              <X size={14} />
+              <X size={20} className="md:w-[14px] md:h-[14px]" />
             </button>
           </div>
 
@@ -184,7 +226,7 @@ export default function PortfolioSection() {
           <div className="max-w-4xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Player block */}
-            <div className="lg:col-span-7 relative rounded-xl overflow-hidden border border-white/10 bg-black aspect-video shadow-lg">
+            <div className="lg:col-span-7 relative md:rounded-xl overflow-hidden border-y md:border border-white/10 bg-black aspect-video shadow-lg -mx-6 md:mx-0 w-[calc(100%+3rem)] md:w-full max-h-[70vh] md:max-h-none flex items-center shrink-0">
               <video
                 ref={videoRef}
                 src={selectedProject.videoUrl}
