@@ -1,33 +1,22 @@
 import os
 import re
 
-def process_directory(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith('.tsx') or file.endswith('.ts'):
-                process_file(os.path.join(root, file))
-
-def process_file(filepath):
-    with open(filepath, 'r') as f:
-        content = f.read()
-
-    original = content
-
-    content = re.sub(
-        r'font-medium text-\[14px\] tracking-\[0.1em\] uppercase',
-        r'font-semibold text-[14px] tracking-[0.08em] uppercase',
-        content
-    )
-    
-    content = re.sub(
-        r'font-medium text-\[14px\] tracking-\[0.08em\] uppercase',
-        r'font-semibold text-[14px] tracking-[0.08em] uppercase',
-        content
-    )
-
-    if content != original:
-        with open(filepath, 'w') as f:
-            f.write(content)
-
-if __name__ == "__main__":
-    process_directory('src/components')
+for root, dirs, files in os.walk('src/components'):
+    for file in files:
+        if file.endswith('.tsx'):
+            filepath = os.path.join(root, file)
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+            original = content
+            
+            content = content.replace('font-display font-medium font-display font-medium', 'font-display font-medium')
+            content = content.replace('text-white text-white', 'text-white')
+            
+            # fix navigation hover
+            content = content.replace('font-display font-medium text-[15px] uppercase tracking-[0.12em]', 'font-display font-medium text-[15px]')
+            content = content.replace('text-white/70 hover:text-white', 'text-white/70 hover:text-white') # just making sure
+            
+            if content != original:
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                print(f"Fixed {filepath}")

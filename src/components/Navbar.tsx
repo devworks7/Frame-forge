@@ -207,7 +207,7 @@ export default function Navbar({
                 setCurrentPage("home");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`font-sans font-medium text-[14px] uppercase tracking-[0.12em] transition-colors duration-300 cursor-pointer ${
+              className={`font-display font-medium text-[15px] transition-colors duration-300 cursor-pointer ${
                 currentPage === "home" ? "text-white" : "text-white/70 hover:text-white"
               }`}
             >
@@ -215,13 +215,13 @@ export default function Navbar({
             </button>
             <button
               onClick={() => scrollToSection("portfolio")}
-              className="font-sans font-medium text-[14px] uppercase tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+              className="font-display font-medium text-[15px] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
             >
               Work
             </button>
             <button
               onClick={() => scrollToSection("services")}
-              className="font-sans font-medium text-[14px] uppercase tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+              className="font-display font-medium text-[15px] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
             >
               Services
             </button>
@@ -230,7 +230,7 @@ export default function Navbar({
                 onCloseVideo?.();
                 setCurrentPage("pricing");
               }}
-              className={`font-sans font-medium text-[14px] uppercase tracking-[0.12em] transition-colors duration-300 cursor-pointer ${
+              className={`font-display font-medium text-[15px] transition-colors duration-300 cursor-pointer ${
                 currentPage === "pricing" ? "text-white" : "text-white/70 hover:text-white"
               }`}
             >
@@ -238,7 +238,7 @@ export default function Navbar({
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="font-sans font-medium text-[14px] uppercase tracking-[0.12em] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+              className="font-display font-medium text-[15px] text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
             >
               Contact
             </button>
@@ -278,7 +278,7 @@ export default function Navbar({
                 onCloseVideo?.();
                 onOpenRequests();
               }}
-              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-display font-medium text-[15px] tracking-wide hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
+              className="liquid-glass hover-lift px-6 py-3 rounded-full text-white font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer"
             >
               Start Project
             </button>
@@ -355,7 +355,7 @@ export default function Navbar({
                       key={item.label}
                       variants={itemVariants}
                       onClick={() => handleNavItemClick(item)}
-                      className={`font-display text-[22px] sm:text-[26px] uppercase tracking-[0.14em] font-light transition-all duration-300 py-3 w-full max-w-xs text-center cursor-pointer min-h-[48px] flex items-center justify-center rounded-full ${
+                      className={`font-display font-medium text-[22px] sm:text-[26px] transition-all duration-300 py-3 w-full max-w-xs text-center cursor-pointer min-h-[48px] flex items-center justify-center rounded-full ${
                         isActive 
                           ? "text-white font-medium bg-white/5 border border-white/10" 
                           : "text-white/60 hover:text-white"
@@ -402,7 +402,7 @@ export default function Navbar({
                   setIsMobileMenuOpen(false);
                   onOpenRequests();
                 }}
-                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-display font-medium text-[15px] tracking-wide hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl liquid-glass border border-white/10 text-white font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase hover:bg-white/10 transition-all duration-300 interactive cursor-pointer text-center flex items-center justify-center gap-2"
               >
                 <Sparkles size={16} className="text-white/80" />
                 <span>Start Project</span>

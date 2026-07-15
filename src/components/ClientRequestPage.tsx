@@ -168,7 +168,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               <Sparkles size={14} />
             </div>
             <div>
-              <h2 className="font-sans font-medium text-[14px] text-white uppercase tracking-[0.08em]">
+              <h2 className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase">
                 Project Specification
               </h2>
               <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
@@ -197,10 +197,10 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                 <h3 className="font-display font-medium text-[22px] sm:text-[28px] text-white tracking-tight font-normal leading-tight">
                   Proposal Submitted
                 </h3>
-                <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
+                <p className="font-sans font-normal text-[15px] text-white/80 leading-[1.7]">
                   Thank you, <strong className="text-white font-medium">{formData.fullName}</strong>. Your creative specifications have been securely parsed and logged.
                 </p>
-                <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
+                <p className="font-sans font-normal text-[15px] text-white/80 leading-[1.7]">
                   Our directors will review your parameters within 24 hours. A customized visual treatment script and cost outline will be sent to <strong className="text-white font-medium">{formData.email}</strong>.
                 </p>
               </div>
@@ -211,7 +211,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
               <button
                 onClick={onClose}
-                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-display font-medium text-[15px] tracking-wide transition-all cursor-pointer"
+                className="liquid-glass hover-lift px-8 py-3.5 rounded-full text-white font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase transition-all cursor-pointer"
               >
                 Return to Studio
               </button>
@@ -228,7 +228,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
               
               {/* Form Category headers */}
               <div className="space-y-6">
-                <h3 className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase border-b border-white/5 pb-2">
+                <h3 className="font-sans font-normal text-[12px] text-white/60 border-b border-white/5 pb-2">
                   01 / Personal Details
                 </h3>
 
@@ -243,7 +243,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       placeholder="e.g., Julien Moreau"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
 
@@ -256,7 +256,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.organizationName}
                       onChange={handleInputChange}
                       placeholder="e.g., Moreau Media Group"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
 
@@ -270,7 +270,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="e.g., julien@moreau.com"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
 
@@ -283,7 +283,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
                       placeholder="e.g., +33 6 1234 5678"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
 
@@ -296,7 +296,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.country}
                       onChange={handleInputChange}
                       placeholder="e.g., France"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
 
@@ -309,7 +309,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.city}
                       onChange={handleInputChange}
                       placeholder="e.g., Paris"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
                     />
                   </div>
                 </div>
@@ -317,7 +317,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
 
               {/* Form parameters 2 */}
               <div className="space-y-6">
-                <h3 className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase border-b border-white/5 pb-2">
+                <h3 className="font-sans font-normal text-[12px] text-white/60 border-b border-white/5 pb-2">
                   02 / Project specifications
                 </h3>
 
@@ -329,7 +329,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-inter text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-sans text-[13px]"
                     >
                       {projectTypes.map((t) => (
                         <option key={t} value={t} className="bg-zinc-950 text-white">{t}</option>
@@ -348,7 +348,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Describe your vision, core pacing direction, reference examples, and master preferences..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-inter text-[13px]"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-sans text-[13px]"
                   />
                 </div>
               </div>
@@ -381,7 +381,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-8 py-3.5 rounded-full font-display font-medium text-[15px] tracking-wide flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
+                  className={`px-8 py-3.5 rounded-full font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
                     isSubmitting
                       ? "bg-white/5 text-white/50 cursor-not-allowed border border-white/5"
                       : "liquid-glass text-white border-white/10 hover:bg-white/10"

@@ -59,13 +59,13 @@ export default function ServicesSection() {
         
         {/* Section Header */}
         <div id="services-header" className="text-center max-w-2xl mx-auto space-y-6">
-          <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
+          <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
             CORE SERVICES
           </span>
-          <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
+          <h2 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
             Creative Capabilities
           </h2>
-          <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] tracking-wide">
+          <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7]">
             Premium websites, cinematic editing, motion graphics, and AI solutions designed for modern businesses. Click any service below to explore the details.
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function ServicesSection() {
                     <h3 className="font-display font-medium text-[20px] text-white tracking-tight group-hover:text-white/80 transition-colors">
                       {srv.title}
                     </h3>
-                    <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
+                    <p className="font-sans font-normal text-[15px] text-white/80 leading-[1.7]">
                       {srv.desc}
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export default function ServicesSection() {
                         className="border-t border-white/5 pt-4 mt-2"
                         onClick={(e) => e.stopPropagation()} // Prevent double trigger
                       >
-                        <p className="font-sans font-light text-[13px] text-white/90 leading-[1.6] bg-white/5 p-3 rounded-lg border border-white/5">
+                        <p className="font-sans font-normal text-[13px] text-white/90 leading-[1.6] bg-white/5 p-3 rounded-lg border border-white/5">
                           "{srv.fullDescription}"
                         </p>
                         <div className="flex justify-end pt-2">

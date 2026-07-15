@@ -37,13 +37,13 @@ export default function PricingDocuments() {
       
       {/* Page Header */}
       <div id="pricing-header" className="space-y-6 text-center max-w-2xl mx-auto">
-        <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
+        <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
           STUDIO RATES
         </span>
-        <h1 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
+        <h1 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
           Bespoke Packages
         </h1>
-        <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-lg mx-auto">
+        <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-lg mx-auto">
           Calibrated rates for elite video editing, motion design, and CGI.
         </p>
       </div>
@@ -65,14 +65,14 @@ export default function PricingDocuments() {
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <span className="font-mono font-medium text-[11px] text-white/50 uppercase tracking-[0.15em] block">
+                <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block">
                   {plan.name}
                 </span>
                 <div className="flex items-baseline space-x-1.5">
                   <span className="font-display font-medium text-4xl text-white tracking-tight">{plan.price}</span>
                   <span className="font-sans text-[13px] text-white/50">{plan.period}</span>
                 </div>
-                <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
+                <p className="font-sans font-normal text-[15px] text-white/80 leading-[1.7]">
                   {plan.desc}
                 </p>
               </div>

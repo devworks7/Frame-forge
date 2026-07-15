@@ -65,13 +65,13 @@ export default function PortfolioSection() {
         {/* Section Header */}
         <div id="portfolio-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
           <div className="space-y-6">
-            <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
+            <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
               FEATURED WORK
             </span>
-            <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
+            <h2 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
               Experience the Craft.
             </h2>
-            <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl">
+            <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-2xl">
               Explore featured edits and creative projects crafted for brands, creators, and businesses.
             </p>
           </div>
@@ -114,7 +114,7 @@ export default function PortfolioSection() {
               {/* Text Meta info */}
               <div className="p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase">
+                  <span className="font-sans font-normal text-[12px] text-white/60">
                     {proj.category}
                   </span>
                   <span className="font-sans text-white/40 text-[11px] font-light">
@@ -126,7 +126,7 @@ export default function PortfolioSection() {
                   <h3 className="font-display font-medium text-[22px] text-white group-hover:text-white/80 transition-colors tracking-tight">
                     {proj.title}
                   </h3>
-                  <p className="font-sans font-light text-[14px] text-white/70 line-clamp-1 leading-[1.6]">
+                  <p className="font-sans font-normal text-[14px] text-white/70 line-clamp-1 leading-[1.6]">
                     {proj.description}
                   </p>
                 </div>
@@ -212,7 +212,7 @@ export default function PortfolioSection() {
             {/* Meta Column */}
             <div className="lg:col-span-5 space-y-6 liquid-glass border border-white/10 p-6 rounded-xl shadow-lg bg-[#070b0e]/80">
               <div className="space-y-1">
-                <span className="font-mono font-medium text-[11px] text-white/50 tracking-[0.15em] uppercase">
+                <span className="font-sans font-normal text-[12px] text-white/60">
                   {selectedProject.category}
                 </span>
                 <h3 className="font-display font-medium text-[28px] text-white tracking-tight leading-none">
@@ -220,7 +220,7 @@ export default function PortfolioSection() {
                 </h3>
               </div>
 
-              <p className="font-sans font-light text-[14px] text-white/70 leading-[1.6]">
+              <p className="font-sans font-normal text-[15px] text-white/80 leading-[1.7]">
                 {selectedProject.description}
               </p>
 
@@ -228,18 +228,18 @@ export default function PortfolioSection() {
                 {selectedProject.clientName && (
                   <div className="flex items-center text-white/70">
                     <User size={12} className="text-white/40 mr-2.5" />
-                    <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Client:</span>
+                    <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase mr-2">Client:</span>
                     <span className="text-white text-[13px] font-light">{selectedProject.clientName}</span>
                   </div>
                 )}
                 <div className="flex items-center text-white/70">
                   <Calendar size={12} className="text-white/40 mr-2.5" />
-                  <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Date:</span>
+                  <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase mr-2">Date:</span>
                   <span className="text-white text-[13px] font-light">{selectedProject.date}</span>
                 </div>
                 <div className="flex items-center text-white/70">
                   <Clock size={12} className="text-white/40 mr-2.5" />
-                  <span className="font-mono font-medium text-[10px] text-white/50 uppercase tracking-[0.15em] mr-2">Duration:</span>
+                  <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase mr-2">Duration:</span>
                   <span className="text-white text-[13px] font-light">{selectedProject.duration}</span>
                 </div>
               </div>

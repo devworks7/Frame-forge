@@ -16,13 +16,13 @@ export default function ContactSection({ content }: ContactProps) {
         
         {/* Section Header */}
         <div id="contact-header" className="text-center max-w-2xl mx-auto space-y-6">
-          <span className="font-mono font-medium text-[12px] tracking-[0.2em] text-white/50 uppercase block animate-opacity-fade">
+          <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
             GET IN TOUCH
           </span>
-          <h2 className="font-display font-medium text-[42px] md:text-[56px] text-white leading-[1.05] tracking-tight animate-fade-rise">
+          <h2 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
             Connect With Us
           </h2>
-          <p className="font-sans font-light text-white/70 text-[17px] sm:text-[19px] leading-[1.7] max-w-2xl mx-auto">
+          <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-2xl mx-auto">
             Ready to elevate your project? Reach out to our directors via any channel below to initiate alignment.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function ContactSection({ content }: ContactProps) {
                   <span className="block font-mono font-medium text-[10px] uppercase tracking-[0.15em] text-white/50">
                     Direct Email
                   </span>
-                  <span className="block font-sans font-light text-[15px] sm:text-[17px] text-white group-hover:text-white/80 transition-colors break-all">
+                  <span className="block font-sans font-normal text-[15px] sm:text-[17px] text-white group-hover:text-white/80 transition-colors break-all">
                     {content.contactEmail || "frameforgestudios.001@gmail.com"}
                   </span>
                 </div>
