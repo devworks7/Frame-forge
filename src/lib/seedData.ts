@@ -184,7 +184,7 @@ export const DEFAULT_CONTENT: SectionContent = {
   heroTitle: "WE DON'T EDIT VIDEOS.\nWE FORGE EXPERIENCES.",
   heroSubtitle: "FRAME FORGE transforms ordinary footage into cinematic visual stories.",
   aboutTitle: "WHO WE ARE",
-  aboutText: "Frame Forge is an elite creative post-production laboratory specializing in high-end CGI, visual effects, and fluid pacing. We partner with leading startups, filmmakers, and digital builders globally to turn standard captures into high-concept artistic campaigns. We operate with cutting-edge workflows to ensure every frame is refined, polished, and powerful.",
+  aboutText: "Frame Forge creates premium websites, cinematic video edits, and digital experiences for businesses that want to stand out. By combining modern design, creative storytelling, and AI-powered workflows, we deliver polished, high-quality work tailored to each client's goals and brand identity.",
   aboutStats: [
     { label: "Cinematic Campaigns Forged", value: "350+" },
     { label: "Active Channels & Brands", value: "85+" },
@@ -194,7 +194,7 @@ export const DEFAULT_CONTENT: SectionContent = {
   contactEmail: "frameforgestudios.001@gmail.com",
   contactPhone: "",
   contactWhatsapp: "",
-  contactInstagram: "https://instagram.com/frameforge",
+  contactInstagram: "https://www.instagram.com/frameforgestudios.001?igsh=MTB4cm9lMWttanhxaQ==",
   contactLinkedIn: "https://linkedin.com/company/frameforge",
   contactLocation: "G-Block, Bandra Kurla Complex, Mumbai, MH, India",
   contactBusinessHours: "Mon - Sat: 10:00 AM - 08:00 PM IST",

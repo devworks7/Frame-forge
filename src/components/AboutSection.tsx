@@ -29,7 +29,7 @@ export default function AboutSection({ content }: AboutProps) {
               {content.aboutQuote || '"Every project starts with a fresh idea—not a template. From cinematic edits to modern websites, everything is designed to reflect your brand and help it stand out."'}
             </p>
             <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7]">
-              {content.aboutText || "Frame Forge is a creative studio focused on crafting premium websites, cinematic edits, and digital experiences that help businesses stand out. We combine modern design, thoughtful storytelling, and AI-powered workflows to create work that looks professional, builds trust, and leaves a lasting impression. Every project is approached with attention to detail, ensuring a polished result that reflects your brand with confidence."}
+              {content.aboutText || "Frame Forge creates premium websites, cinematic video edits, and digital experiences for businesses that want to stand out. By combining modern design, creative storytelling, and AI-powered workflows, we deliver polished, high-quality work tailored to each client's goals and brand identity."}
             </p>
           </div>
         </div>

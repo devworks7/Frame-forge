@@ -103,7 +103,7 @@ export default function PortfolioSection() {
               Experience the Craft.
             </h2>
             <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-2xl">
-              Explore featured edits and creative projects crafted for brands, creators, and businesses.
+              From cinematic edits to promotional content, every project is created with precision, emotion, and purpose.
             </p>
           </div>
         </div>

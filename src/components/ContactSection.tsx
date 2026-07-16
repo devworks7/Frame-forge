@@ -62,7 +62,7 @@ export default function ContactSection({ content }: ContactProps) {
               <div className="flex items-center space-x-3">
                 {/* Instagram */}
                 <a
-                  href={content.contactInstagram || "https://instagram.com/frameforge"}
+                  href={content.contactInstagram || "https://www.instagram.com/frameforgestudios.001?igsh=MTB4cm9lMWttanhxaQ=="}
                   target="_blank"
                   rel="noreferrer"
                   className="p-3 rounded-full liquid-glass border border-white/10 text-white/60 hover:text-white transition-all hover-lift cursor-pointer"
