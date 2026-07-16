@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   ShieldAlert, Lock, Eye, Key, LayoutDashboard, FileSpreadsheet, Film, FileText, Settings,
-  Activity, Users, Mail, Play, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes
+  Activity, Users, Mail, Play, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes, Database, Edit2
 } from "lucide-react";
-import { PortfolioItem, PDFDoc, ClientRequest, FAQItem, Testimonial, SectionContent, Analytics, RecentActivity, ServiceItem } from "../types";
+import { PortfolioItem, PDFDoc, ClientRequest, FAQItem, Testimonial, SectionContent, Analytics, RecentActivity, ServiceItem, PricingPackage } from "../types";
 import Logo from "./Logo";
 import {
   getPortfolioItems, savePortfolioItem, deletePortfolioItem,
