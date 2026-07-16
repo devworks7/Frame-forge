@@ -9,7 +9,6 @@ interface ClientRequestPageProps {
 
 export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
     
     // Add history API for back button
     window.history.pushState({ modalOpen: true }, '');
@@ -20,7 +19,6 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
     window.addEventListener('popstate', handlePopState);
     
     return () => {
-      document.body.style.overflow = '';
       window.removeEventListener('popstate', handlePopState);
     };
   }, [onClose]);
@@ -173,8 +171,8 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
   };
 
   return (
-    <div id="request-page-root" className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex justify-center md:items-start py-0 px-0 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] sm:pt-12 sm:pb-12 sm:px-6 animate-opacity-fade">
-      <div className="max-w-3xl w-full min-h-[100dvh] sm:min-h-0 sm:rounded-2xl liquid-glass border-0 sm:border border-white/10 shadow-2xl relative overflow-hidden animate-subtle-scale bg-[#080d12]/95">
+    <div id="request-page-root" className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex flex-col md:items-center py-0 px-0 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] sm:pt-12 sm:pb-12 sm:px-6 animate-opacity-fade">
+      <div className="max-w-3xl w-full min-h-max flex-1 sm:flex-none sm:rounded-2xl liquid-glass border-0 sm:border border-white/10 shadow-2xl relative animate-subtle-scale bg-[#080d12]/95">
         
         {/* Header Ribbon */}
         <div className="flex items-center justify-between p-6 sm:p-8 border-b border-white/10 bg-black/40">
@@ -258,7 +256,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       placeholder="e.g., Julien Moreau"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
 
@@ -271,7 +269,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.organizationName}
                       onChange={handleInputChange}
                       placeholder="e.g., Moreau Media Group"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
 
@@ -285,7 +283,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="e.g., julien@moreau.com"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
 
@@ -298,7 +296,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
                       placeholder="e.g., +33 6 1234 5678"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
 
@@ -311,7 +309,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.country}
                       onChange={handleInputChange}
                       placeholder="e.g., France"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
 
@@ -324,7 +322,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       value={formData.city}
                       onChange={handleInputChange}
                       placeholder="e.g., Paris"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                     />
                   </div>
                 </div>
@@ -344,7 +342,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-sans text-[13px]"
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none font-sans text-[13px] min-h-[44px]"
                     >
                       {projectTypes.map((t) => (
                         <option key={t} value={t} className="bg-zinc-950 text-white">{t}</option>
@@ -363,7 +361,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Describe your vision, core pacing direction, reference examples, and master preferences..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-sans text-[13px]"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-sans text-[13px] min-h-[44px]"
                   />
                 </div>
                 {/* Reference Links */}
@@ -375,7 +373,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     value={formData.referenceLinks}
                     onChange={handleInputChange}
                     placeholder="Paste URLs to inspiration, assets, or references..."
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                    className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px] min-h-[44px]"
                   />
                 </div>
 
@@ -391,7 +389,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     id="consent-box"
                     checked={formData.consent}
                     onChange={handleCheckboxChange}
-                    className="mt-1 accent-white rounded cursor-pointer"
+                    className="mt-1 accent-white rounded cursor-pointer min-h-[44px]"
                   />
                   <label htmlFor="consent-box" className="font-sans text-[13px] text-white/70 font-light leading-relaxed cursor-pointer select-none">
                     I authorize Frame Forge Studio to log this request parameters in their protected database. I acknowledge that all discussions are bound by strict NDA covenants to protect concept ownership.
@@ -410,7 +408,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-8 py-3.5 rounded-full font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift ${
+                  className={`w-full sm:w-auto justify-center px-8 py-3.5 rounded-full font-display font-medium text-[14px] tracking-[0.1em] text-white uppercase flex items-center space-x-2.5 transition-all cursor-pointer hover-lift min-h-[44px] ${
                     isSubmitting
                       ? "bg-white/5 text-white/50 cursor-not-allowed border border-white/5"
                       : "liquid-glass text-white border-white/10 hover:bg-white/10"

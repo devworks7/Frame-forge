@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   ShieldAlert, Lock, Eye, Key, LayoutDashboard, FileSpreadsheet, Film, FileText, Settings,
-  Activity, Users, Mail, Play, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes, Database, Edit2
+  Activity, Users, Mail, Play, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, Download, Upload, Trash2, ArrowUp, ArrowDown, Plus, HelpCircle, UserPlus, Sparkles, X, Edit, Boxes, Database, Edit2, Menu
 } from "lucide-react";
 import { PortfolioItem, PDFDoc, ClientRequest, FAQItem, Testimonial, SectionContent, Analytics, RecentActivity, ServiceItem, PricingPackage } from "../types";
 import Logo from "./Logo";
@@ -64,6 +64,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<"metrics" | "requests" | "portfolio" | "pdfs" | "content" | "services" | "packages">("metrics");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Filtering states
   const [requestFilterStatus, setRequestFilterStatus] = useState<string>("All");
@@ -828,14 +829,14 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               <button
                 type="button"
                 onClick={onClose}
-                className="font-mono text-[10px] text-white/50 hover:text-white uppercase transition-colors cursor-pointer"
+                className="font-mono text-[10px] text-white/50 hover:text-white uppercase transition-colors cursor-pointer min-h-[44px]"
               >
                 // RETURN_TO_WEBSITE
               </button>
 
               <button
                 type="submit"
-                className="px-6 py-3 rounded-xl bg-white text-black font-sans font-black text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+                className="px-6 py-3 rounded-xl bg-white text-black font-sans font-black text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer min-h-[44px]"
               >
                 ACCESS CONSOLE
               </button>
@@ -892,7 +893,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             ) : (
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-white text-black font-sans font-bold uppercase tracking-wider hover:bg-cyan-400 transition-colors cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-white text-black font-sans font-bold uppercase tracking-wider hover:bg-cyan-400 transition-colors cursor-pointer min-h-[44px]"
               >
                 COMMIT SECURE CREDENTIALS
               </button>
@@ -935,7 +936,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all interactive cursor-pointer"
+            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all interactive cursor-pointer min-h-[44px]"
           >
             <X size={18} />
           </button>
@@ -943,10 +944,29 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       </div>
 
       {/* Main Grid: Left Nav, Right Content workspace */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         
-        {/* Left Side menu navigation */}
-        <div className="w-56 border-r border-white/5 bg-[#0a0a0c] p-4 flex flex-col justify-between">
+        {/* Left Side menu navigation (Mobile Drawer & Desktop Sidebar) */}
+        {isMobileMenuOpen && (
+          <div 
+            className="md:hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-sm" 
+            onClick={() => setIsMobileMenuOpen(false)} 
+          />
+        )}
+        <div className={`
+          absolute md:static inset-y-0 left-0 z-50
+          w-64 md:w-56 border-r border-white/5 bg-[#0a0a0c] p-4 flex flex-col justify-between
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}>
+          {/* Mobile close button & Terminate inside sidebar */}
+          <div className="md:hidden flex justify-between items-center mb-6">
+            <span className="font-mono text-[9px] text-white/50 uppercase">Menu</span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-white/60">
+              <X size={18} />
+            </button>
+          </div>
+
           <div className="space-y-6">
             <span className="block font-mono text-[8px] text-white/40 uppercase tracking-widest px-3">
               // MODULE ENGINE
@@ -955,7 +975,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             <div className="space-y-1 text-xs">
               {/* Tab 1 */}
               <button
-                onClick={() => setActiveTab("metrics")}
+                onClick={() => { setActiveTab("metrics"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "metrics" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -966,7 +986,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Tab 2 */}
               <button
-                onClick={() => setActiveTab("requests")}
+                onClick={() => { setActiveTab("requests"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center justify-between px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "requests" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -984,7 +1004,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Tab 3 */}
               <button
-                onClick={() => setActiveTab("portfolio")}
+                onClick={() => { setActiveTab("portfolio"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "portfolio" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -995,7 +1015,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Tab 4 */}
               <button
-                onClick={() => setActiveTab("pdfs")}
+                onClick={() => { setActiveTab("pdfs"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "pdfs" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -1006,7 +1026,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Tab 5 */}
               <button
-                onClick={() => setActiveTab("content")}
+                onClick={() => { setActiveTab("content"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "content" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -1017,7 +1037,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
               {/* Tab 6: Services */}
               <button
-                onClick={() => setActiveTab("services")}
+                onClick={() => { setActiveTab("services"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "services" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -1027,7 +1047,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               </button>
               
               <button
-                onClick={() => setActiveTab("packages")}
+                onClick={() => { setActiveTab("packages"); setIsMobileMenuOpen(false); }}
                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "packages" ? "bg-white/5 text-cyan-400" : "text-white/60 hover:text-white hover:bg-white/[0.01]"
                 }`}
@@ -1039,6 +1059,17 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           </div>
 
           <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 font-mono text-[8px] text-white/50 leading-normal space-y-1">
+            <button
+              onClick={() => {
+                localStorage.removeItem("ff_admin_token");
+                setToken(null);
+                setIsAuthenticated(false);
+                onLoginStateChange(false);
+              }}
+              className="md:hidden mb-4 w-full px-3 py-2 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 font-mono text-[9px] border border-red-500/20 transition-all cursor-pointer"
+            >
+              TERMINATE_SESSION
+            </button>
             <div>CORE_VER: v1.0.4</div>
             <div>
               PERSIST_ENGINE:{" "}
@@ -1158,7 +1189,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   )}
                   <button
                     onClick={handleExportCSV}
-                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer"
+                    className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-sans font-bold text-xs uppercase flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-400 cursor-pointer min-h-[44px]"
                   >
                     <Download size={14} />
                     <span>EXPORT CSV</span>
@@ -1194,8 +1225,8 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
               </div>
 
               {/* Table rendering */}
-              <div className="border border-white/5 rounded-2xl bg-[#0a0a0c] overflow-hidden overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+              <div className="hidden md:block border border-white/5 rounded-2xl bg-[#0a0a0c] overflow-hidden overflow-x-auto">
+                <table className="hidden md:table w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-mono text-white/50 uppercase">
                       <th className="p-4">CLIENT & ORG</th>
@@ -1321,6 +1352,101 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                   </tbody>
                 </table>
               </div>
+              {/* Mobile Cards View */}
+              <div className="md:hidden flex flex-col divide-y divide-white/5 border border-white/5 rounded-2xl bg-[#0a0a0c] overflow-hidden mt-4">
+                {paginatedRequests.map((r) => (
+                  <div key={r.id + "_mobile"} className="p-4 space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="block font-sans font-bold text-white text-sm">{r.fullName}</span>
+                        <span className="block font-sans text-xs text-white/50">{r.organizationName || "No Company"}</span>
+                      </div>
+                      <select
+                        value={r.status}
+                        onChange={(e) => handleUpdateStatus(r.id, e.target.value as any)}
+                        className={`px-2 py-1 rounded-md font-mono text-[9px] font-bold uppercase border focus:outline-none ${
+                          r.status === "new" ? "bg-blue-950/40 text-blue-400 border-blue-800" :
+                          r.status === "in_progress" ? "bg-yellow-950/40 text-yellow-400 border-yellow-800" :
+                          r.status === "completed" ? "bg-green-950/40 text-green-400 border-green-800" :
+                          "bg-red-950/40 text-red-400 border-red-800"
+                        }`}
+                      >
+                        <option value="new">NEW</option>
+                        <option value="in_progress">IN PROGRESS</option>
+                        <option value="completed">COMPLETED</option>
+                        <option value="rejected">REJECTED</option>
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-1 text-xs">
+                      <span className="block font-sans font-semibold text-white uppercase">{r.projectType}</span>
+                      <span className="block text-purple-400 font-mono text-[10px]">{r.budget}</span>
+                      <span className="block text-cyan-400">{r.email}</span>
+                      <span className="block text-white/50">{r.phoneNumber || "No Phone"}</span>
+                      <span className="block font-mono text-[9px] text-white/40 uppercase mt-1">LOC: {r.city || "?"}, {r.country || "?"}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedRequestId(expandedRequestId === r.id ? null : r.id)}
+                        className={`px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-colors ${
+                          expandedRequestId === r.id ? "bg-cyan-500 text-black" : "bg-white/5 text-white/70"
+                        }`}
+                      >
+                        <Eye size={12} />
+                        <span>{expandedRequestId === r.id ? "Hide Specs" : "View Specs"}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteRequest(r.id)}
+                        className="px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 bg-red-500/10 text-red-400 border border-red-500/20"
+                      >
+                        <Trash2 size={12} />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+
+                    {expandedRequestId === r.id && (
+                      <div className="bg-black/40 p-4 rounded-xl border border-white/5 space-y-4 text-xs font-sans mt-3 animate-fade-in">
+                        <div className="space-y-1">
+                          <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Project Specification details</span>
+                          <p className="text-white/90 whitespace-pre-wrap font-sans text-xs bg-[#030304] p-3 rounded-xl border border-white/5 leading-relaxed shadow-inner">
+                            {r.description}
+                          </p>
+                        </div>
+                        <div className="space-y-3 pt-2 border-t border-white/5">
+                          <div className="space-y-1">
+                            <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Reference Links</span>
+                            <div className="text-white/70 break-all font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
+                              {r.referenceLinks || "No reference links supplied."}
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Uploaded Specification Document</span>
+                            <div className="text-white/70 block font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
+                              {r.fileName ? (
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-2 overflow-hidden pr-2">
+                                    <FileText size={12} className="text-cyan-400 shrink-0" />
+                                    <a href={r.fileUrl} target="_blank" rel="noreferrer" className="hover:text-cyan-400 underline truncate transition-colors">
+                                      {r.fileName}
+                                    </a>
+                                  </div>
+                                  <a href={r.fileUrl} target="_blank" rel="noreferrer" className="shrink-0 p-1.5 rounded bg-white/10 hover:bg-white/20 transition-colors">
+                                    <Download size={10} />
+                                  </a>
+                                </div>
+                              ) : "No file attached."}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
 
               {/* Table Pagination controls */}
               {totalRequestPages > 1 && (
@@ -1450,7 +1576,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         <input
                           type="file"
                           id="admin-video-file"
-                          className="hidden"
+                          className="hidden min-h-[44px]"
                           onChange={handleFileUpload}
                           accept="video/mp4,video/quicktime,video/webm"
                           disabled={isUploading}
@@ -1470,18 +1596,18 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       {isUploading && (
                         <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
                           <div className="flex justify-between text-xs font-mono text-white/60">
-                            <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
-                            <span>{uploadProgress}%</span>
+                            <span className="truncate pr-2">{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
+                            <span className="shrink-0">{uploadProgress}%</span>
                           </div>
                           <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/5">
                             <div 
                               className="bg-cyan-500 h-full rounded-full transition-all duration-300 ease-out"
-                              style={{ width: `${uploadProgress}%` }}
+                              style={{ width: `${Math.min(uploadProgress, 100)}%`, maxWidth: '100%' }}
                             />
                           </div>
-                          <div className="flex justify-between text-[10px] font-mono text-white/50">
-                            <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
-                            <span>ETA: {formatTime(uploadStats.eta)}</span>
+                          <div className="flex flex-row justify-between text-[10px] font-mono text-white/50">
+                            <span className="truncate pr-2">Speed: {formatBytes(uploadStats.speed)}/s</span>
+                            <span className="shrink-0">ETA: {formatTime(uploadStats.eta)}</span>
                           </div>
                         </div>
                       )}
@@ -1627,7 +1753,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                         <input
                           type="file"
                           id="admin-pdf-file"
-                          className="hidden"
+                          className="hidden min-h-[44px]"
                           onChange={handleFileUpload}
                           accept="application/pdf"
                           disabled={isUploading}
@@ -1647,18 +1773,18 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       {isUploading && (
                         <div className="mt-4 bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
                           <div className="flex justify-between text-xs font-mono text-white/60">
-                            <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
-                            <span>{uploadProgress}%</span>
+                            <span className="truncate pr-2">{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
+                            <span className="shrink-0">{uploadProgress}%</span>
                           </div>
                           <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/5">
                             <div 
                               className="bg-cyan-500 h-full rounded-full transition-all duration-300 ease-out"
-                              style={{ width: `${uploadProgress}%` }}
+                              style={{ width: `${Math.min(uploadProgress, 100)}%`, maxWidth: '100%' }}
                             />
                           </div>
-                          <div className="flex justify-between text-[10px] font-mono text-white/50">
-                            <span>Speed: {formatBytes(uploadStats.speed)}/s</span>
-                            <span>ETA: {formatTime(uploadStats.eta)}</span>
+                          <div className="flex flex-row justify-between text-[10px] font-mono text-white/50">
+                            <span className="truncate pr-2">Speed: {formatBytes(uploadStats.speed)}/s</span>
+                            <span className="shrink-0">ETA: {formatTime(uploadStats.eta)}</span>
                           </div>
                         </div>
                       )}
@@ -2301,7 +2427,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       </label>
                     </div>
 
-                    <div className="sm:col-span-2 flex justify-end space-x-4 mt-2">
+                    <div className="sm:col-span-2 flex flex-col-reverse sm:flex-row justify-end gap-3 sm:space-x-4 mt-4 sticky bottom-4 z-10 bg-[#0a0a0c]/95 backdrop-blur-md p-4 -mx-4 rounded-xl border border-white/10 sm:static sm:bg-transparent sm:backdrop-blur-none sm:p-0 sm:mx-0 sm:border-0 shadow-2xl sm:shadow-none">
                       <button
                         type="button"
                         onClick={() => setEditingPackage(null)}
@@ -2312,7 +2438,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                       <button
                         type="submit"
                         disabled={isUploading}
-                        className="px-6 py-2 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 transition-colors font-bold uppercase disabled:opacity-50 cursor-pointer"
+                        className="px-6 py-2 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 transition-colors font-bold uppercase disabled:opacity-50 cursor-pointer min-h-[44px]"
                       >
                         {isUploading ? "SAVING..." : "COMMIT PACKAGE"}
                       </button>
@@ -2387,11 +2513,11 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                     </div>
                   </div>
                   
-                  <div className="flex justify-end pt-2">
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4 pt-2 sticky bottom-4 z-10 bg-[#0a0a0c]/95 backdrop-blur-md p-4 -mx-4 rounded-xl border border-white/10 sm:static sm:bg-transparent sm:backdrop-blur-none sm:p-0 sm:mx-0 sm:border-0 shadow-2xl sm:shadow-none">
                       <button
                         onClick={handleSaveContent}
                         disabled={isUploading}
-                        className="px-6 py-2 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 transition-colors font-bold uppercase disabled:opacity-50 cursor-pointer"
+                        className="px-6 py-2 rounded-lg bg-cyan-500 text-black hover:bg-cyan-400 transition-colors font-bold uppercase disabled:opacity-50 cursor-pointer min-h-[44px]"
                       >
                         {isUploading ? "SAVING..." : "SAVE HEADERS"}
                       </button>

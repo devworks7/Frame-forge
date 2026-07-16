@@ -5,6 +5,7 @@ import CustomCursor from "./components/CustomCursor";
 import Navbar from "./components/Navbar";
 import Logo from "./components/Logo";
 import Hero from "./components/Hero";
+import LazySection from "./components/LazySection";
 
 const AboutSection = lazy(() => import("./components/AboutSection"));
 const ServicesSection = lazy(() => import("./components/ServicesSection"));
@@ -223,10 +224,10 @@ export default function App() {
             siteContent && (
               <div className="space-y-0">
                 <Hero content={siteContent} onOpenRequests={handleOpenRequests} />
-                <PortfolioSection />
-                <ServicesSection />
-                <AboutSection content={siteContent} />
-                <ContactSection content={siteContent} />
+                <LazySection height="800px"><PortfolioSection /></LazySection>
+                <LazySection height="800px"><ServicesSection /></LazySection>
+                <LazySection height="800px"><AboutSection content={siteContent} /></LazySection>
+                <LazySection height="800px"><ContactSection content={siteContent} /></LazySection>
               </div>
             )
           ) : (
