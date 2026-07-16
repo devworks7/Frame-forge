@@ -78,6 +78,18 @@ export interface RecentActivity {
   timestamp: string;
 }
 
+export interface PricingPackage {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  desc: string;
+  features: string[];
+  popular: boolean;
+  order: number;
+  enabled: boolean;
+}
+
 export interface ServiceItem {
   id: string;
   title: string;
@@ -103,4 +115,7 @@ export interface SectionContent {
   contactLocation: string;
   contactBusinessHours: string;
   logoUrl?: string;
+  pricingTitle?: string;
+  pricingSubtitle?: string;
+  pricingDesc?: string;
 }

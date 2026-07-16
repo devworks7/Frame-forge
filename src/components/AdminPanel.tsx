@@ -7,7 +7,7 @@ import { PortfolioItem, PDFDoc, ClientRequest, FAQItem, Testimonial, SectionCont
 import Logo from "./Logo";
 import {
   getPortfolioItems, savePortfolioItem, deletePortfolioItem,
-  getPDFDocuments, savePDFDocument, deletePDFDocument,
+  getPDFDocuments, savePDFDocument, deletePDFDocument, getPricingPackages, savePricingPackage, deletePricingPackage,
   getFAQs, saveFAQ, deleteFAQ,
   getTestimonials, saveTestimonial, deleteTestimonial,
   getSectionContent, saveSectionContent,
@@ -75,8 +75,14 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   const [editingPdf, setEditingPdf] = useState<Partial<PDFDoc> | null>(null);
   const [editingFaq, setEditingFaq] = useState<Partial<FAQItem> | null>(null);
   const [editingTestimonial, setEditingTestimonial] = useState<Partial<Testimonial> | null>(null);
+
   const [services, setServices] = useState<ServiceItem[]>([]);
+  const [packages, setPackages] = useState<PricingPackage[]>([]);
+
+
   const [editingService, setEditingService] = useState<Partial<ServiceItem> | null>(null);
+  const [editingPackage, setEditingPackage] = useState<Partial<PricingPackage> | null>(null);
+
 
   // File uploading states
   const [uploadedFileName, setUploadedFileName] = useState("");
@@ -649,7 +655,46 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
   };
 
   // Service Operations
+
+  const handleSavePackage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPackage || !editingPackage.name || !editingPackage.price || !editingPackage.period || !editingPackage.desc) {
+      alert("Missing required fields for Package");
+      return;
+    }
+    
+    setIsUploading(true);
+    try {
+      const p: PricingPackage = {
+        id: editingPackage.id || "",
+        name: editingPackage.name,
+        price: editingPackage.price,
+        period: editingPackage.period,
+        desc: editingPackage.desc,
+        features: editingPackage.features || [],
+        popular: editingPackage.popular || false,
+        order: editingPackage.order || 0,
+        enabled: editingPackage.enabled !== undefined ? editingPackage.enabled : true,
+      };
+      await savePricingPackage(p);
+      setPackages(await getPricingPackages());
+      setEditingPackage(null);
+    } catch (err: any) {
+      alert(err.message || "Failed to save Package");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeletePackage = async (id: string) => {
+    if (confirm("DELETE SECURE PACKAGE PROFILE?")) {
+      await deletePricingPackage(id);
+      setPackages(await getPricingPackages());
+    }
+  };
+
   const handleSaveService = async (e: React.FormEvent) => {
+
     e.preventDefault();
     if (!editingService) return;
     const finalItem: ServiceItem = {

@@ -1,50 +1,22 @@
 import React from "react";
 import { Check, Download, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
-import { getPDFDocuments } from "../lib/dataService";
-import { PDFDoc } from "../types";
+import { getPDFDocuments, getPricingPackages } from "../lib/dataService";
+import { PDFDoc, PricingPackage, SectionContent } from "../types";
 
-export default function PricingDocuments() {
+
+export default function PricingDocuments({ content }: { content: SectionContent | null }) {
   const [documents, setDocuments] = useState<PDFDoc[]>([]);
+  const [plans, setPlans] = useState<PricingPackage[]>([]);
 
   useEffect(() => {
+    getPricingPackages().then(data => {
+      setPlans(data.filter(p => p.enabled).sort((a, b) => a.order - b.order));
+    });
     getPDFDocuments().then(data => {
-      // Filter out documents that shouldn't be downloaded, if necessary,
-      // but according to user: "where the clients can look up for the document name, description, package and click to download the pdf"
-      // Wait, there's `downloadsAllowed` field.
       setDocuments(data.filter(d => d.downloadsAllowed).sort((a, b) => a.order - b.order));
     });
   }, []);
-
-  const plans = [
-    {
-      name: "Standard Cut",
-      price: "€2,500",
-      period: "per minute",
-      desc: "Ideal for boutique brands and digital leaders seeking cinematic-grade marketing cuts.",
-      features: [
-        "Cinematic Edit Assembly",
-        "Classic Color Science",
-        "Baseline Sound Treatment",
-        "FHD Master Delivery",
-        "Unlimited Broadcast Licensing",
-      ],
-    },
-    {
-      name: "Cinematic Master",
-      price: "€6,000",
-      period: "per minute",
-      desc: "Built for luxury labels and complex productions requiring high-poly CGI and VFX.",
-      features: [
-        "High-Poly 3D Modeling",
-        "Environmental VFX Compositing",
-        "DaVinci Film Color Grading",
-        "Spatial Audio Scoring",
-        "Uncompressed 4K master",
-      ],
-      popular: true,
-    },
-  ];
 
   return (
     <div id="pricing-documents-root" className="max-w-4xl mx-auto px-6 py-32 space-y-16">
@@ -52,13 +24,13 @@ export default function PricingDocuments() {
       {/* Page Header */}
       <div id="pricing-header" className="space-y-6 text-center max-w-2xl mx-auto">
         <span className="font-display font-medium text-[13px] tracking-[0.3em] text-white/65 uppercase block animate-opacity-fade">
-          STUDIO RATES
+          {content?.pricingTitle || "STUDIO RATES"}
         </span>
         <h1 className="font-display font-normal text-[36px] sm:text-[48px] text-white leading-[1.2] tracking-tight animate-fade-rise">
-          Bespoke Packages
+          {content?.pricingSubtitle || "Bespoke Packages"}
         </h1>
         <p className="font-sans font-normal text-white/80 text-[16px] sm:text-[18px] leading-[1.7] max-w-lg mx-auto">
-          Calibrated rates for elite video editing, motion design, and CGI.
+          {content?.pricingDesc || "Calibrated rates for elite video editing, motion design, and CGI."}
         </p>
       </div>
 

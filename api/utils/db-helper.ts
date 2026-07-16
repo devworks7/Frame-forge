@@ -55,6 +55,8 @@ export function getModelForCollection(collectionName: string) {
       return models.FAQ;
     case "pdfs":
       return models.PDFDoc;
+    case "packages":
+      return models.PricingPackage;
     case "requests":
       return models.ClientRequest;
     case "activities":

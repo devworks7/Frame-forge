@@ -1,7 +1,7 @@
 import { 
   PortfolioItem, PDFDoc, FAQItem, Testimonial, 
   ClientRequest, Analytics, RecentActivity, 
-  ServiceItem, SectionContent 
+  ServiceItem, SectionContent, PricingPackage 
 } from "../types";
 
 const getHeaders = () => {
@@ -67,13 +67,35 @@ export async function deletePortfolioItem(id: string): Promise<void> {
 // ------------------------------------------
 // PDF DOCUMENTS API
 // ------------------------------------------
-export async function getPDFDocuments(): Promise<PDFDoc[]> {
-  const res = await fetch("/api/db/pdfs");
-  if (!res.ok) throw new Error("Failed to fetch pdfs");
-  return res.json();
+
+
+
+export async function savePricingPackage(pkg: PricingPackage): Promise<void> {
+  cachedPackages = null;
+  cachedPackagesPromise = null;
+  const res = await fetch("/api/db/packages", {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(pkg),
+  });
+  if (!res.ok) throw new Error("Failed to save pricing package");
 }
 
+export async function deletePricingPackage(id: string): Promise<void> {
+  cachedPackages = null;
+  cachedPackagesPromise = null;
+  const res = await fetch(`/api/db/packages/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+  if (!res.ok) throw new Error("Failed to delete pricing package");
+}
+
+
+
 export async function savePDFDocument(pdf: PDFDoc): Promise<void> {
+  cachedPDFs = null;
+  cachedPDFsPromise = null;
   const res = await fetch("/api/db/pdfs", {
     method: "POST",
     headers: getHeaders(),
@@ -83,6 +105,8 @@ export async function savePDFDocument(pdf: PDFDoc): Promise<void> {
 }
 
 export async function deletePDFDocument(id: string): Promise<void> {
+  cachedPDFs = null;
+  cachedPDFsPromise = null;
   const res = await fetch(`/api/db/pdfs/${id}`, {
     method: "DELETE",
     headers: getHeaders(),
@@ -265,3 +289,43 @@ export async function getRecentActivities(): Promise<RecentActivity[]> {
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 10);
 }
+
+let cachedPackages: PricingPackage[] | null = null;
+let cachedPackagesPromise: Promise<PricingPackage[]> | null = null;
+
+export function getPricingPackages(): Promise<PricingPackage[]> {
+  if (cachedPackages) return Promise.resolve(cachedPackages);
+  if (cachedPackagesPromise) return cachedPackagesPromise;
+  
+  cachedPackagesPromise = fetch("/api/db/packages").then(res => {
+    if (!res.ok) throw new Error("Failed to fetch pricing packages");
+    return res.json().then(data => {
+      cachedPackages = data;
+      return data;
+    });
+  });
+  return cachedPackagesPromise;
+}
+
+let cachedPDFs: PDFDoc[] | null = null;
+let cachedPDFsPromise: Promise<PDFDoc[]> | null = null;
+
+export function getPDFDocuments(): Promise<PDFDoc[]> {
+  if (cachedPDFs) return Promise.resolve(cachedPDFs);
+  if (cachedPDFsPromise) return cachedPDFsPromise;
+  
+  cachedPDFsPromise = fetch("/api/db/pdfs").then(res => {
+    if (!res.ok) throw new Error("Failed to fetch pdfs");
+    return res.json().then(data => {
+      cachedPDFs = data;
+      return data;
+    });
+  });
+  return cachedPDFsPromise;
+}
+
+export function preloadPricingAndDocuments() {
+  getPricingPackages().catch(console.error);
+  getPDFDocuments().catch(console.error);
+}
+

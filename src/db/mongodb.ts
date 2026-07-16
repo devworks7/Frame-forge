@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import {
+  DEFAULT_PACKAGES,
   DEFAULT_PORTFOLIO,
   DEFAULT_PDFS,
   DEFAULT_TESTIMONIALS,
@@ -152,7 +153,23 @@ const PDFDocSchema = new mongoose.Schema({
 
 export const PDFDoc = (mongoose.models.PDFDoc || mongoose.model("PDFDoc", PDFDocSchema)) as mongoose.Model<any>;
 
+
+// 10. PricingPackage Model
+const PricingPackageSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  name: { type: String, required: true },
+  price: { type: String, required: true },
+  period: { type: String, required: true },
+  desc: { type: String, required: true },
+  features: [{ type: String }],
+  popular: { type: Boolean, default: false },
+  order: { type: Number, required: true, default: 0 },
+  enabled: { type: Boolean, default: true },
+});
+export const PricingPackage = (mongoose.models.PricingPackage || mongoose.model("PricingPackage", PricingPackageSchema)) as mongoose.Model<any>;
+
 // 9. SectionContent Model
+
 const SectionContentSchema = new mongoose.Schema({
   heroTitle: { type: String, required: true },
   heroSubtitle: { type: String, required: true },
@@ -171,6 +188,9 @@ const SectionContentSchema = new mongoose.Schema({
   contactLocation: { type: String, required: true },
   contactBusinessHours: { type: String, required: true },
   logoUrl: { type: String, default: "" },
+  pricingTitle: { type: String, default: "STUDIO RATES" },
+  pricingSubtitle: { type: String, default: "Bespoke Packages" },
+  pricingDesc: { type: String, default: "Calibrated rates for elite video editing, motion design, and CGI." },
 });
 
 export const SectionContent = (mongoose.models.SectionContent || mongoose.model("SectionContent", SectionContentSchema)) as mongoose.Model<any>;

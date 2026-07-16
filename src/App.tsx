@@ -21,6 +21,7 @@ import {
   checkInitialSeed,
   getSectionContent,
   incrementAnalytics,
+  preloadPricingAndDocuments,
   logActivity
 } from "./lib/dataService";
 
@@ -41,6 +42,7 @@ export default function App() {
     let isMounted = true;
     async function init() {
       await checkInitialSeed();
+      preloadPricingAndDocuments();
       const c = await getSectionContent();
       if (isMounted) {
         setSiteContent(c);
@@ -229,7 +231,7 @@ export default function App() {
             )
           ) : (
             /* PRICING & DOCUMENTS PAGE */
-            <PricingDocuments />
+            <PricingDocuments content={siteContent} />
           )}
         </Suspense>
       </main>
