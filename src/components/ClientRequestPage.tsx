@@ -61,9 +61,7 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
     "Corporate Video",
     "YouTube Editing",
     "Motion Graphics",
-    "VFX & Compositing",
     "Instagram / Reels",
-    "3D Animation",
     "Short Film",
   ];
 
@@ -368,7 +366,21 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-white focus:bg-white/10 text-white focus:outline-none placeholder-zinc-600 leading-relaxed font-sans text-[13px]"
                   />
                 </div>
+                {/* Reference Links */}
+                <div className="space-y-2">
+                  <label className="block font-sans text-[13px] text-white/70 mb-1.5">Reference Links (Optional)</label>
+                  <input
+                    type="text"
+                    name="referenceLinks"
+                    value={formData.referenceLinks}
+                    onChange={handleInputChange}
+                    placeholder="Paste URLs to inspiration, assets, or references..."
+                    className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 focus:border-white text-white focus:outline-none placeholder-zinc-600 font-sans text-[13px]"
+                  />
+                </div>
+
               </div>
+
 
               {/* Legal terms */}
               <div className="p-5 rounded-xl liquid-glass border border-white/5 space-y-3.5 bg-black/20">
