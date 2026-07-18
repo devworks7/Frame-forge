@@ -152,7 +152,7 @@ export default React.memo(function Navbar({
       y: "-100%",
       transition: {
         duration: 0.4,
-        ease: [0.16, 1, 0.3, 1],
+        
         when: "afterChildren",
       }
     },
@@ -161,7 +161,7 @@ export default React.memo(function Navbar({
       y: 0,
       transition: {
         duration: 0.5,
-        ease: [0.16, 1, 0.3, 1],
+        
         when: "beforeChildren",
         staggerChildren: 0.08,
       }
@@ -173,7 +173,7 @@ export default React.memo(function Navbar({
     visible: { 
       opacity: 1, 
       y: 0, 
-      transition: { duration: 0.4, ease: "easeOut" } 
+      transition: { duration: 0.4,  } 
     }
   };
 

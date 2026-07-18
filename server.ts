@@ -20,7 +20,7 @@ async function startServer() {
   const routeApi = async (req: any, res: any) => {
     const pathname = req.path;
     try {
-      if (pathname === '/api/cloudinary/sign') {
+      if (pathname === '/api/cloudinary-sign') {
         return await cloudinarySignApi(req, res);
       } else if (pathname === '/api/health' || pathname === '/api/db-status' || pathname.startsWith('/api/stream-video/') || pathname.startsWith('/api/documents/')) {
         return await systemApi(req, res);

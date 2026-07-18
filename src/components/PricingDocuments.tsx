@@ -10,12 +10,17 @@ export default function PricingDocuments({ content }: { content: SectionContent 
   const [plans, setPlans] = useState<PricingPackage[]>([]);
 
   useEffect(() => {
-    getPricingPackages().then(data => {
-      setPlans(data.filter(p => p.enabled).sort((a, b) => a.order - b.order));
-    });
-    getPDFDocuments().then(data => {
-      setDocuments(data.filter(d => d.downloadsAllowed).sort((a, b) => a.order - b.order));
-    });
+    getPricingPackages()
+      .then(data => {
+        setPlans((Array.isArray(data) ? data : []).filter(p => p.enabled).sort((a, b) => a.order - b.order));
+      })
+      .catch(() => setPlans([]));
+      
+    getPDFDocuments()
+      .then(data => {
+        setDocuments((Array.isArray(data) ? data : []).filter(d => d.downloadsAllowed).sort((a, b) => a.order - b.order));
+      })
+      .catch(() => setDocuments([]));
   }, []);
 
   return (
@@ -65,7 +70,7 @@ export default function PricingDocuments({ content }: { content: SectionContent 
 
               {/* Feature list */}
               <ul className="space-y-3 pt-4 border-t border-white/5">
-                {plan.features.map((feature, fIdx) => (
+                {(plan.features || []).map((feature, fIdx) => (
                   <li key={fIdx} className="flex items-center space-x-2.5 text-[14px] text-white/70 leading-relaxed font-light">
                     <Check size={12} className="text-white/40 shrink-0" />
                     <span className="font-sans">{feature}</span>

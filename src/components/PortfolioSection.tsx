@@ -8,10 +8,21 @@ export default function PortfolioSection() {
   const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     async function load() {
-      const data = await getPortfolioItems();
-      setProjects(data);
+      try {
+        setIsLoading(true);
+        const data = await getPortfolioItems();
+        setProjects(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Failed to load portfolio");
+        setProjects([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
     load();
   }, []);
@@ -106,11 +117,28 @@ export default function PortfolioSection() {
         </div>
 
         {/* Projects Grid */}
-        <div
-          id="portfolio-grid"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {projects.map((proj) => (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             {[1, 2, 3].map(i => (
+                <div key={i} className="aspect-video rounded-xl bg-white/[0.02] border border-white/5 animate-pulse"></div>
+             ))}
+          </div>
+        ) : error ? (
+          <div className="py-12 border border-rose-500/20 bg-rose-950/10 rounded-2xl flex items-center justify-center text-rose-400 font-sans text-sm">
+            {error}
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="py-24 border border-white/5 liquid-glass rounded-2xl flex flex-col items-center justify-center text-center space-y-3">
+             <Film className="text-white/20 mb-2" size={48} />
+             <p className="text-white/70 font-sans font-bold uppercase tracking-wider text-sm">No Projects Available</p>
+             <p className="text-white/40 text-xs">Portfolio is currently being updated.</p>
+          </div>
+        ) : (
+          <div
+            id="portfolio-grid"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {projects.map((proj) => (
             <div
               key={proj.id}
               onClick={() => handleOpenProject(proj)}
@@ -163,12 +191,8 @@ export default function PortfolioSection() {
             </div>
           ))}
 
-          {projects.length === 0 && (
-            <div className="col-span-full py-20 text-center">
-              <p className="font-sans text-white/50 text-xs">No project streams are online at this time.</p>
-            </div>
-          )}
         </div>
+        )}
       </div>
 
       {/* FULLSCREEN PREVIEW MODAL */}
@@ -202,7 +226,7 @@ export default function PortfolioSection() {
             </div>
             
             <button
-              onClick={handleCloseProject}
+              onClick={() => handleCloseProject()}
               className="p-3 md:p-2 rounded-full bg-white/10 hover:bg-white/20 md:liquid-glass md:hover:bg-white/10 text-white transition-all cursor-pointer shadow-sm flex items-center justify-center min-w-[44px] min-h-[44px]"
             >
               <X size={20} className="md:w-[14px] md:h-[14px]" />
