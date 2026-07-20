@@ -427,6 +427,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
                const d = JSON.parse(xhr.responseText);
+               console.log("[Frontend Upload Log] - API Response (Success):", d);
                setUploadStage("Processing...");
                
                // Verification logic
@@ -466,14 +467,39 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                reject(new Error("Failed to parse upload response: " + err.message));
             }
           } else {
-            reject(new Error(`Upload failed with status ${xhr.status}`));
+            let errorMsg = `Cloudinary upload failed with status ${xhr.status}`;
+            try {
+              const errRes = JSON.parse(xhr.responseText);
+              console.log("[Frontend Upload Log] - API Response (Error):", errRes);
+              if (errRes.error && errRes.error.message) {
+                errorMsg = `Cloudinary upload failed: ${errRes.error.message}`;
+              } else {
+                errorMsg = `Cloudinary upload failed: ${xhr.responseText}`;
+              }
+            } catch(e) {
+              errorMsg = `Cloudinary upload failed: ${xhr.responseText}`;
+            }
+            if (xhr.status === 400 && errorMsg.includes("Invalid file type")) errorMsg = "Invalid file type";
+            if (xhr.status === 400 && errorMsg.includes("exceeds")) errorMsg = "File exceeds upload limit";
+            reject(new Error(errorMsg));
           }
         });
 
         xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
         xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
 
-        xhr.open("POST", `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`);
+        const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+        const resourceType = isPdf ? "raw" : "auto";
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
+        
+        console.log("[Frontend Upload Log]");
+        console.log("- Selected filename:", file.name);
+        console.log("- File size:", file.size);
+        console.log("- MIME type:", file.type);
+        console.log("- Request URL:", uploadUrl);
+        console.log("- FormData contents: file, api_key, timestamp, signature, folder");
+
+        xhr.open("POST", uploadUrl);
         xhr.send(formData);
       });
 

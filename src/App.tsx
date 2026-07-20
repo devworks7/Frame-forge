@@ -28,19 +28,6 @@ import {
 
 export default function App() {
 
-  // Global auto-scroll for inputs on mobile
-  useEffect(() => {
-    const handleFocus = (e: FocusEvent) => {
-      const target = e.target as HTMLElement;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
-        setTimeout(() => {
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-      }
-    };
-    window.addEventListener('focus', handleFocus, true);
-    return () => window.removeEventListener('focus', handleFocus, true);
-  }, []);
   const [currentPage, setCurrentPage] = useState<"home" | "pricing">("home");
   const [showRequests, setShowRequests] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
@@ -137,7 +124,6 @@ export default function App() {
       setShowRequests(true);
     } else {
       setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, []);
 
