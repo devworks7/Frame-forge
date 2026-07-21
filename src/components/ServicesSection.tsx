@@ -77,7 +77,7 @@ export default function ServicesSection() {
             return (
               <motion.div
                 key={srv.id}
-                layout
+               
                 onClick={() => setExpandedId(isExpanded ? null : srv.id)}
                 className={`liquid-glass hover-lift rounded-xl p-6 transition-all duration-300 cursor-pointer overflow-hidden select-none group border border-white/5 ${
                   isExpanded ? "bg-white/[0.04] ring-1 ring-white/20" : ""

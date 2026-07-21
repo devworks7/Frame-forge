@@ -380,13 +380,22 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
       setUploadStage("Uploading...");
 
-      // 2. Upload directly to Cloudinary
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      if (isPdf && file.size > 100 * 1024 * 1024) {
+        setUploadError("PDF file exceeds 100 MB limit.");
+        setIsUploading(false);
+        return;
+      }
+
+      // 2. Upload directly to Cloudinary or our backend
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("api_key", signData.apiKey);
-      formData.append("timestamp", signData.timestamp.toString());
-      formData.append("signature", signData.signature);
-      formData.append("folder", signData.folder);
+      if (!isPdf) {
+        formData.append("api_key", signData.apiKey);
+        formData.append("timestamp", signData.timestamp.toString());
+        formData.append("signature", signData.signature);
+        formData.append("folder", signData.folder);
+      }
 
       const startTime = Date.now();
       let lastTime = startTime;
@@ -490,7 +499,7 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
 
         const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
         const resourceType = isPdf ? "raw" : "auto";
-        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
+        const uploadUrl = isPdf ? "/api/upload" : `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
         
         console.log("[Frontend Upload Log]");
         console.log("- Selected filename:", file.name);
@@ -500,6 +509,9 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         console.log("- FormData contents: file, api_key, timestamp, signature, folder");
 
         xhr.open("POST", uploadUrl);
+        if (isPdf) {
+          xhr.setRequestHeader("Authorization", "Bearer " + token);
+        }
         xhr.send(formData);
       });
 

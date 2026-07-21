@@ -5,15 +5,14 @@ import CustomCursor from "./components/CustomCursor";
 import Navbar from "./components/Navbar";
 import Logo from "./components/Logo";
 import Hero from "./components/Hero";
-import LazySection from "./components/LazySection";
 
-const AboutSection = lazy(() => import("./components/AboutSection"));
-const ServicesSection = lazy(() => import("./components/ServicesSection"));
-const PortfolioSection = lazy(() => import("./components/PortfolioSection"));
-const ContactSection = lazy(() => import("./components/ContactSection"));
-const PricingDocuments = lazy(() => import("./components/PricingDocuments"));
-const ClientRequestPage = lazy(() => import("./components/ClientRequestPage"));
-const AdminPanel = lazy(() => import("./components/AdminPanel"));
+import AboutSection from "./components/AboutSection";
+import ServicesSection from "./components/ServicesSection";
+import PortfolioSection from "./components/PortfolioSection";
+import ContactSection from "./components/ContactSection";
+import PricingDocuments from "./components/PricingDocuments";
+import ClientRequestPage from "./components/ClientRequestPage";
+import AdminPanel from "./components/AdminPanel";
 
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -224,10 +223,10 @@ export default function App() {
             siteContent && (
               <div className="space-y-0">
                 <Hero content={siteContent} onOpenRequests={handleOpenRequests} />
-                <LazySection height="800px"><PortfolioSection /></LazySection>
-                <LazySection height="800px"><ServicesSection /></LazySection>
-                <LazySection height="800px"><AboutSection content={siteContent} /></LazySection>
-                <LazySection height="800px"><ContactSection content={siteContent} /></LazySection>
+                <PortfolioSection />
+                <ServicesSection />
+                <AboutSection content={siteContent} />
+                <ContactSection content={siteContent} />
               </div>
             )
           ) : (

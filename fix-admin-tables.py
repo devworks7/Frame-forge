@@ -1,21 +1,26 @@
 import re
 
-with open("src/components/AdminPanel.tsx", "r") as f:
-    text = f.read()
+with open('src/components/AdminPanel.tsx', 'r') as f:
+    content = f.read()
 
-table_original_start = r'<table className="w-full text-left border-collapse text-xs">'
-table_new_start = r'<table className="hidden md:table w-full text-left border-collapse text-xs">'
+# We need to find the </tbody></table></div> block after the table mapping.
+# The table ends around here:
+#                         {expandedRequestId === r.id && (
+#                           ...
+#                         )}
+#                       </React.Fragment>
+#                     ))}
+#                   </tbody>
+#                 </table>
+#               </div>
 
-text = re.sub(table_original_start, table_new_start, text)
+mobile_cards_code = """
+              </div>
 
-# Now we need to append the mobile cards after the table closes.
-table_end = r'(\s*</table>\n\s*</div>)'
-
-mobile_cards = """
-              {/* Mobile Cards View */}
-              <div className="md:hidden flex flex-col divide-y divide-white/5 border border-white/5 rounded-2xl bg-[#0a0a0c] overflow-hidden mt-4">
+              {/* Mobile Card Rendering */}
+              <div className="md:hidden space-y-4">
                 {paginatedRequests.map((r) => (
-                  <div key={r.id + "_mobile"} className="p-4 space-y-4">
+                  <div key={r.id} className="bg-[#0a0a0c] border border-white/5 rounded-2xl p-4 space-y-4">
                     <div className="flex justify-between items-start">
                       <div>
                         <span className="block font-sans font-bold text-white text-sm">{r.fullName}</span>
@@ -37,70 +42,57 @@ mobile_cards = """
                         <option value="rejected">REJECTED</option>
                       </select>
                     </div>
-                    
-                    <div className="space-y-1 text-xs">
-                      <span className="block font-sans font-semibold text-white uppercase">{r.projectType}</span>
-                      <span className="block text-purple-400 font-mono text-[10px]">{r.budget}</span>
+                    <div className="text-xs space-y-1">
                       <span className="block text-cyan-400">{r.email}</span>
                       <span className="block text-white/50">{r.phoneNumber || "No Phone"}</span>
-                      <span className="block font-mono text-[9px] text-white/40 uppercase mt-1">LOC: {r.city || "?"}, {r.country || "?"}</span>
+                      <span className="block font-mono text-[9px] text-white/40 mt-1 uppercase">LOC: {r.city || "?"}, {r.country || "?"}</span>
                     </div>
-
-                    <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                      <button
-                        type="button"
-                        onClick={() => setExpandedRequestId(expandedRequestId === r.id ? null : r.id)}
-                        className={`px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-colors ${
-                          expandedRequestId === r.id ? "bg-cyan-500 text-black" : "bg-white/5 text-white/70"
-                        }`}
-                      >
-                        <Eye size={12} />
-                        <span>{expandedRequestId === r.id ? "Hide Specs" : "View Specs"}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteRequest(r.id)}
-                        className="px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 bg-red-500/10 text-red-400 border border-red-500/20"
-                      >
-                        <Trash2 size={12} />
-                        <span>Delete</span>
-                      </button>
+                    <div className="flex justify-between items-center border-t border-white/5 pt-3">
+                      <div>
+                        <span className="block font-sans font-semibold text-white uppercase text-xs">{r.projectType}</span>
+                        <span className="block text-purple-400 font-mono text-[10px]">{r.budget}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedRequestId(expandedRequestId === r.id ? null : r.id)}
+                          className={`p-2 rounded cursor-pointer transition-colors ${
+                            expandedRequestId === r.id
+                              ? "bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                              : "bg-white/5 hover:bg-white/10 text-white/70"
+                          }`}
+                          title="View full specs"
+                        >
+                          <Eye size={12} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteRequest(r.id)}
+                          className="p-2 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 cursor-pointer"
+                          title="Delete request"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
                     </div>
-
                     {expandedRequestId === r.id && (
-                      <div className="bg-black/40 p-4 rounded-xl border border-white/5 space-y-4 text-xs font-sans mt-3 animate-fade-in">
+                      <div className="bg-black/30 rounded-xl p-4 mt-2 border border-white/5 text-xs text-white/80 space-y-3">
                         <div className="space-y-1">
-                          <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Project Specification details</span>
-                          <p className="text-white/90 whitespace-pre-wrap font-sans text-xs bg-[#030304] p-3 rounded-xl border border-white/5 leading-relaxed shadow-inner">
-                            {r.description}
-                          </p>
+                          <span className="block font-bold text-white uppercase text-[10px] text-white/40">Requirements</span>
+                          <p className="font-sans leading-relaxed">{r.projectDetails || "No detailed requirements provided."}</p>
                         </div>
-                        <div className="space-y-3 pt-2 border-t border-white/5">
+                        {r.timeline && (
                           <div className="space-y-1">
-                            <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Reference Links</span>
-                            <div className="text-white/70 break-all font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
-                              {r.referenceLinks || "No reference links supplied."}
-                            </div>
+                            <span className="block font-bold text-white uppercase text-[10px] text-white/40">Timeline</span>
+                            <p className="font-sans">{r.timeline}</p>
                           </div>
+                        )}
+                        {r.referenceLinks && (
                           <div className="space-y-1">
-                            <span className="font-mono text-[9px] uppercase text-[#C8A96A] block font-bold tracking-wider">Uploaded Specification Document</span>
-                            <div className="text-white/70 block font-mono text-[11px] bg-black/20 p-2.5 rounded-lg border border-white/5">
-                              {r.fileName ? (
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center space-x-2 overflow-hidden pr-2">
-                                    <FileText size={12} className="text-cyan-400 shrink-0" />
-                                    <a href={r.fileUrl} target="_blank" rel="noreferrer" className="hover:text-cyan-400 underline truncate transition-colors">
-                                      {r.fileName}
-                                    </a>
-                                  </div>
-                                  <a href={r.fileUrl} target="_blank" rel="noreferrer" className="shrink-0 p-1.5 rounded bg-white/10 hover:bg-white/20 transition-colors">
-                                    <Download size={10} />
-                                  </a>
-                                </div>
-                              ) : "No file attached."}
-                            </div>
+                            <span className="block font-bold text-white uppercase text-[10px] text-white/40">References</span>
+                            <p className="font-sans break-all">{r.referenceLinks}</p>
                           </div>
-                        </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -108,13 +100,7 @@ mobile_cards = """
               </div>
 """
 
-# Find the exact match of the table end in TAB 2: CLIENT REQUESTS
-# We will just replace `</table>\n              </div>` with `</table>\n              </div>\n` + mobile_cards
-match = re.search(r'</table>\n\s*</div>', text)
-if match:
-    text = text[:match.end()] + mobile_cards + text[match.end():]
-else:
-    print("Could not find table end!")
+content = content.replace("              </div>\n\n              {/* Pagination controls */}", mobile_cards_code + "\n              {/* Pagination controls */}")
 
-with open("src/components/AdminPanel.tsx", "w") as f:
-    f.write(text)
+with open('src/components/AdminPanel.tsx', 'w') as f:
+    f.write(content)

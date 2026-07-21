@@ -103,6 +103,7 @@ export function uploadBufferToCloudinary(buffer: Buffer, originalName: string, m
           folder: "frameforge",
           resource_type: "auto",
           public_id: publicId,
+          chunk_size: 5000000
         },
         (error, result) => {
           if (error) {

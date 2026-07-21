@@ -1,4 +1,6 @@
 import express from 'express';
+import multer from 'multer';
+import { uploadBufferToCloudinary, verifySession } from './api/utils/db-helper.js';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 
@@ -14,9 +16,41 @@ async function startServer() {
   const PORT = 3000;
 
   app.use((req, res, next) => {
-    express.json({ limit: '50mb' })(req, res, next);
+    express.json({ limit: '100mb' })(req, res, next);
   });
   
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 100 * 1024 * 1024 } // 100 MB
+  });
+
+  app.post('/api/upload', upload.single('file'), async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const token = authHeader?.split(" ")[1];
+      if (!token) return res.status(403).json({ error: "Unauthorized" });
+      const isValid = await verifySession(token);
+      if (!isValid) return res.status(403).json({ error: "Unauthorized" });
+
+      if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+      if (req.file.size > 100 * 1024 * 1024) {
+         return res.status(400).json({ error: { message: "File exceeds 100MB limit" }});
+      }
+
+      const result = await uploadBufferToCloudinary(req.file.buffer, req.file.originalname, req.file.mimetype);
+      
+      return res.json({
+        secure_url: result.secure_url,
+        duration: result.duration,
+        public_id: result.public_id
+      });
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      return res.status(500).json({ error: { message: err.message || "Upload failed" }});
+    }
+  });
+
   const routeApi = async (req: any, res: any) => {
     const pathname = req.path;
     try {
