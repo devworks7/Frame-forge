@@ -154,7 +154,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           setDbStatus(d);
         }
       } catch (e) {
-        console.error("Failed to check database status:", e);
       }
     }
     fetchDbStatus();
@@ -181,7 +180,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             setToken(null);
           }
         } catch (e) {
-          console.error("Session validation error:", e);
         }
       }
     }
@@ -213,7 +211,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       setContent(textContent);
       setServices([...srvList].sort((a, b) => a.order - b.order));
     } catch (e) {
-      console.error("Dashboard database fetch failed:", e);
     }
   };
 
@@ -250,7 +247,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         setLoginError(d.error || "Credentials verification failed.");
       }
     } catch (err) {
-      console.error("Login processing error:", err);
       setLoginError("Error contacting the secure auth engine.");
     }
   };
@@ -288,7 +284,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         setPasswordError(d.error || "Password change failed.");
       }
     } catch (e) {
-      console.error("Password update error:", e);
       setPasswordError("Password transition failed.");
     }
   };
@@ -436,7 +431,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
                const d = JSON.parse(xhr.responseText);
-               console.log("[Frontend Upload Log] - API Response (Success):", d);
                setUploadStage("Processing...");
                
                // Verification logic
@@ -452,7 +446,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
                // Attempt to HEAD request the url to verify it's active
                try {
                  const checkRes = await fetch(d.secure_url, { method: "HEAD" });
-                 if (!checkRes.ok) console.warn("Resource may not be fully propagated yet.");
                } catch (e) {
                  // Ignore cross-origin HEAD errors if any
                }
@@ -479,7 +472,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
             let errorMsg = `Cloudinary upload failed with status ${xhr.status}`;
             try {
               const errRes = JSON.parse(xhr.responseText);
-              console.log("[Frontend Upload Log] - API Response (Error):", errRes);
               if (errRes.error && errRes.error.message) {
                 errorMsg = `Cloudinary upload failed: ${errRes.error.message}`;
               } else {
@@ -501,12 +493,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         const resourceType = isPdf ? "raw" : "auto";
         const uploadUrl = isPdf ? "/api/upload" : `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
         
-        console.log("[Frontend Upload Log]");
-        console.log("- Selected filename:", file.name);
-        console.log("- File size:", file.size);
-        console.log("- MIME type:", file.type);
-        console.log("- Request URL:", uploadUrl);
-        console.log("- FormData contents: file, api_key, timestamp, signature, folder");
 
         xhr.open("POST", uploadUrl);
         if (isPdf) {
@@ -519,7 +505,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       
     } catch (err: any) {
       setUploadError(err.message || "An error occurred during upload.");
-      console.error(err);
     } finally {
       setIsUploading(false);
       setUploadStage("Preparing...");

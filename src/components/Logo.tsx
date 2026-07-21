@@ -33,7 +33,6 @@ export default function Logo({
           setLogoUrl(content.logoUrl);
         }
       } catch (err) {
-        console.warn("Could not load dynamic logo in self-contained Logo wrapper:", err);
       }
     }
     fetchLogo();

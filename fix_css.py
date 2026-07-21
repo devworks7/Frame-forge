@@ -1,10 +1,9 @@
 import re
 
-with open("src/index.css", "r", encoding="utf-8") as f:
-    text = f.read()
+with open('src/index.css', 'r') as f:
+    content = f.read()
 
-text = text.replace("  overflow-x: hidden;\n", "")
+content = content.replace("  scroll-behavior: smooth;\n", "")
 
-with open("src/index.css", "w", encoding="utf-8") as f:
-    f.write(text)
-
+with open('src/index.css', 'w') as f:
+    f.write(content)

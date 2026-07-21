@@ -159,11 +159,10 @@ export default function ClientRequestPage({ onClose }: ClientRequestPageProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestDetails: request }),
-      }).catch((err) => console.log("Simulated notification sent."));
+      });
 
       setSubmitSuccess(true);
     } catch (err) {
-      console.error("Submission failed:", err);
       setErrorMsg("Submission encountered an issue. Please try again.");
     } finally {
       setIsSubmitting(false);

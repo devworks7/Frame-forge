@@ -20,10 +20,8 @@ export async function connectDB() {
   }
   try {
     await mongoose.connect(uri);
-    console.log("Successfully connected to MongoDB Atlas");
     await seedDB();
   } catch (err) {
-    console.error("MongoDB connection error:", err);
     throw err;
   }
 }
@@ -210,54 +208,46 @@ export const RecentActivity = (mongoose.models.RecentActivity || mongoose.model(
 // ---------------------------------------------------------
 async function seedDB() {
   try {
-    console.log("Checking database collections for seeding...");
 
     // 1. Portfolio
     const portfolioCount = await Portfolio.countDocuments();
     if (portfolioCount === 0) {
-      console.log("Seeding portfolio items into MongoDB...");
       await Portfolio.insertMany(DEFAULT_PORTFOLIO);
     }
 
     // 2. Services
     const serviceCount = await Service.countDocuments();
     if (serviceCount === 0) {
-      console.log("Seeding services into MongoDB...");
       await Service.insertMany(DEFAULT_SERVICES);
     }
 
     // 3. Testimonials
     const testimonialCount = await Testimonial.countDocuments();
     if (testimonialCount === 0) {
-      console.log("Seeding testimonials into MongoDB...");
       await Testimonial.insertMany(DEFAULT_TESTIMONIALS);
     }
 
     // 4. FAQs
     const faqCount = await FAQ.countDocuments();
     if (faqCount === 0) {
-      console.log("Seeding FAQs into MongoDB...");
       await FAQ.insertMany(DEFAULT_FAQS);
     }
 
     // 5. PDFDocs
     const pdfCount = await PDFDoc.countDocuments();
     if (pdfCount === 0) {
-      console.log("Seeding PDF documents into MongoDB...");
       await PDFDoc.insertMany(DEFAULT_PDFS);
     }
 
     // 6. SectionContent
     const contentCount = await SectionContent.countDocuments();
     if (contentCount === 0) {
-      console.log("Seeding SectionContent into MongoDB...");
       await SectionContent.create(DEFAULT_CONTENT);
     }
 
     // 7. Analytics
     const analyticsCount = await Analytics.countDocuments();
     if (analyticsCount === 0) {
-      console.log("Seeding Analytics into MongoDB...");
       await Analytics.create({
         totalVisitors: 452,
         projectRequests: 18,
@@ -269,7 +259,6 @@ async function seedDB() {
 
     // 8. AdminUsers initialization
     try {
-      console.log("Ensuring Admins collection exists...");
       await AdminUser.createCollection();
     } catch (e) {
       // Collection might already exist
@@ -277,20 +266,15 @@ async function seedDB() {
 
     const adminCount = await AdminUser.countDocuments();
     if (adminCount === 0) {
-      console.log("Admins collection is empty. Seeding default administrator...");
       const passwordHash = await bcrypt.hash("devshubh07", 10);
       await AdminUser.create({
         username: "frameforge.com",
         passwordHash,
         mustChangePassword: false,
       });
-      console.log("Default administrator seeded successfully!");
     } else {
-      console.log("Admins collection is not empty. Skipping admin seeding.");
     }
 
-    console.log("Seeding check completed successfully!");
   } catch (err) {
-    console.error("Error seeding database:", err);
   }
 }

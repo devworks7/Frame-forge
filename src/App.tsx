@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Sparkles, Mail, ShieldAlert, Star } from "lucide-react";
-import ThreeBackground from "./components/ThreeBackground";
 import CustomCursor from "./components/CustomCursor";
 import Navbar from "./components/Navbar";
 import Logo from "./components/Logo";
@@ -10,9 +9,9 @@ import AboutSection from "./components/AboutSection";
 import ServicesSection from "./components/ServicesSection";
 import PortfolioSection from "./components/PortfolioSection";
 import ContactSection from "./components/ContactSection";
-import PricingDocuments from "./components/PricingDocuments";
-import ClientRequestPage from "./components/ClientRequestPage";
-import AdminPanel from "./components/AdminPanel";
+const PricingDocuments = lazy(() => import("./components/PricingDocuments"));
+const ClientRequestPage = lazy(() => import("./components/ClientRequestPage"));
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
 
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -72,7 +71,6 @@ export default function App() {
             localStorage.removeItem("ff_admin_token");
           }
         } catch (e) {
-          console.error("Session validation error on app load:", e);
         }
       }
     }
@@ -163,7 +161,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#070b0e] text-white selection:bg-white selection:text-black font-sans relative overflow-x-clip">
+    <div className="min-h-screen bg-[#070b0e] text-white selection:bg-white selection:text-black font-sans relative overflow-x-hidden">
       
       {/* Absolute Viewport Background Video */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -172,7 +170,7 @@ export default function App() {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto" poster="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=1920"
           className="w-full h-full object-cover opacity-35"
         >
           <source
@@ -185,8 +183,7 @@ export default function App() {
       </div>
 
       {/* 3D background floating nodes */}
-      <ThreeBackground />
-
+      
       {/* Custom elegant cursor */}
       <CustomCursor />
 

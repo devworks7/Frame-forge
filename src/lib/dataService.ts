@@ -258,7 +258,6 @@ export async function incrementAnalytics(field: keyof Analytics): Promise<void> 
       body: JSON.stringify({ field }),
     });
   } catch (e) {
-    console.warn("Analytics increment failed:", e);
   }
 }
 
@@ -277,7 +276,6 @@ export async function logActivity(type: RecentActivity["type"], description: str
       body: JSON.stringify(activity),
     });
   } catch (e) {
-    console.warn("Activity logging failed:", e);
   }
 }
 
@@ -325,7 +323,5 @@ export function getPDFDocuments(): Promise<PDFDoc[]> {
 }
 
 export function preloadPricingAndDocuments() {
-  getPricingPackages().catch(console.error);
-  getPDFDocuments().catch(console.error);
 }
 

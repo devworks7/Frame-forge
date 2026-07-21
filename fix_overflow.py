@@ -1,35 +1,17 @@
 import re
 
-with open("src/components/AboutSection.tsx", "r", encoding="utf-8") as f:
-    about_text = f.read()
+with open('src/App.tsx', 'r') as f:
+    content = f.read()
+content = content.replace('overflow-x-clip', 'overflow-x-hidden')
+content = content.replace('min-h-[100dvh]', 'min-h-screen')
 
-about_text = about_text.replace(
-    'className="relative py-32 sm:py-40 px-6 sm:px-12 lg:px-24 overflow-hidden"',
-    'className="relative py-32 sm:py-40 px-6 sm:px-12 lg:px-24 overflow-clip"'
-)
+with open('src/App.tsx', 'w') as f:
+    f.write(content)
 
-with open("src/components/AboutSection.tsx", "w", encoding="utf-8") as f:
-    f.write(about_text)
+with open('src/components/Hero.tsx', 'r') as f:
+    content2 = f.read()
+content2 = content2.replace('overflow-clip', 'overflow-hidden')
+content2 = content2.replace('min-h-[100dvh]', 'min-h-screen')
 
-with open("src/components/Hero.tsx", "r", encoding="utf-8") as f:
-    hero_text = f.read()
-
-hero_text = hero_text.replace(
-    'className="relative min-h-[100dvh] flex flex-col justify-center items-center px-6 sm:px-12 lg:px-20 overflow-hidden py-32"',
-    'className="relative min-h-[100dvh] flex flex-col justify-center items-center px-6 sm:px-12 lg:px-20 overflow-clip py-32"'
-)
-
-with open("src/components/Hero.tsx", "w", encoding="utf-8") as f:
-    f.write(hero_text)
-
-with open("src/App.tsx", "r", encoding="utf-8") as f:
-    app_text = f.read()
-
-app_text = app_text.replace(
-    'overflow-x-hidden',
-    'overflow-x-clip'
-)
-
-with open("src/App.tsx", "w", encoding="utf-8") as f:
-    f.write(app_text)
-
+with open('src/components/Hero.tsx', 'w') as f:
+    f.write(content2)

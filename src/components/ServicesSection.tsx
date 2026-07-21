@@ -17,7 +17,6 @@ export default function ServicesSection() {
         const sorted = [...data].sort((a, b) => a.order - b.order);
         setServices(sorted);
       } catch (err) {
-        console.error("Failed to load services:", err);
       } finally {
         setLoading(false);
       }
