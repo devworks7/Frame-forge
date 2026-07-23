@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Play, Calendar, User, Clock, Film, X, ShieldAlert } from "lucide-react";
+import { Play, Calendar, User, Clock, Film, X, ShieldAlert, Maximize } from "lucide-react";
 import { PortfolioItem } from "../types.js";
 import { getPortfolioItems, incrementAnalytics, logActivity } from "../lib/dataService.js";
 
@@ -48,6 +48,9 @@ export default function PortfolioSection() {
     if (!selectedProject) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        if (document.fullscreenElement || (document as any).webkitFullscreenElement || (document as any).mozFullScreenElement || (document as any).msFullscreenElement) {
+           return;
+        }
         handleCloseProject();
       }
     };
@@ -92,6 +95,26 @@ export default function PortfolioSection() {
 
   const preventContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
+  };
+
+
+  const handleFullscreen = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+
+    try {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if ((video as any).webkitRequestFullscreen) {
+        (video as any).webkitRequestFullscreen();
+      } else if ((video as any).msRequestFullscreen) {
+        (video as any).msRequestFullscreen();
+      } else if ((video as any).webkitEnterFullscreen) {
+        (video as any).webkitEnterFullscreen();
+      }
+    } catch (error) {
+      
+    }
   };
 
   return (
@@ -237,14 +260,14 @@ export default function PortfolioSection() {
           <div className="max-w-4xl mx-auto w-full p-0 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
             
             {/* Player block */}
-            <div className="lg:col-span-7 relative md:rounded-xl overflow-hidden md:border border-white/10 bg-black aspect-video shadow-lg w-full max-h-[70vh] md:max-h-none flex items-center shrink-0">
+            <div className="group lg:col-span-7 relative md:rounded-xl overflow-hidden md:border border-white/10 bg-black aspect-video shadow-lg w-full max-h-[70vh] md:max-h-none flex items-center shrink-0">
               <video
                 ref={videoRef}
                 src={selectedProject.videoUrl}
                 poster={selectedProject.thumbnail}
                 controls
-                controlsList="nodownload nofullscreen noremoteplayback"
-                disablePictureInPicture
+                controlsList="nodownload noremoteplayback"
+                
                 autoPlay
                 preload="metadata"
                 playsInline
@@ -261,6 +284,18 @@ export default function PortfolioSection() {
                   FRAME FORGE DIRECT STREAM
                 </span>
               </div>
+              {/* Custom Fullscreen Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFullscreen();
+                }}
+                type="button" aria-label="Enter fullscreen"
+                className="absolute bottom-16 right-4 p-2.5 rounded-xl liquid-glass border border-white/10 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 hover:scale-105 transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 outline-none focus:ring-2 focus:ring-white/20 active:scale-95 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              >
+                <Maximize size={18} />
+              </button>
+
             </div>
 
             {/* Meta Column */}
