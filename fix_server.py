@@ -1,17 +1,45 @@
-with open("server.ts", "r") as f:
-    content = f.read()
-
 import re
 
-# Remove import uploadApi
-content = re.sub(r"import uploadApi from '\./api/upload\.js';\n", "", content)
+with open('server.ts', 'r') as f:
+    content = f.read()
 
-# Replace app.use logic for /api/admin/upload
-content = re.sub(r"if \(req\.path\.startsWith\('/api/admin/upload'\) \|\| req\.path\.startsWith\('/api/upload'\)\) \{\n\s*next\(\);\n\s*\} else \{\n\s*express\.json\(\{ limit: '50mb' \}\)\(req, res, next\);\n\s*\}", "express.json({ limit: '50mb' })(req, res, next);", content)
+content = content.replace("import { uploadBufferToCloudinary, verifySession } from './api/utils/db-helper.js';", "import { uploadBufferToCloudinary, verifySession, cloudinaryStorage } from './api/utils/db-helper.js';")
 
-# Remove /api/upload route logic
-route_pattern = r"if \(pathname === '/api/admin/upload' \|\| pathname === '/api/upload'\) \{\n\s*return await uploadApi\(req, res\);\n\s*\} else "
-content = re.sub(route_pattern, "", content)
+multer_init_old = """  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 100 * 1024 * 1024 } // 100 MB
+  });"""
+multer_init_new = """  const upload = multer({ 
+    storage: cloudinaryStorage,
+    limits: { fileSize: 100 * 1024 * 1024 } // 100 MB
+  });"""
 
-with open("server.ts", "w") as f:
+content = content.replace(multer_init_old, multer_init_new)
+
+upload_route_old = """      if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+      if (req.file.size > 100 * 1024 * 1024) { 
+        return res.status(400).json({ error: { message: "File exceeds 100MB limit" }});
+      }
+
+      const result = await uploadBufferToCloudinary(req.file.buffer, req.file.originalname, req.file.mimetype);
+      
+      return res.json({
+        secure_url: result.secure_url,
+        duration: result.duration,
+        public_id: result.public_id
+      });"""
+
+upload_route_new = """      if (!req.file) return res.status(400).json({ error: { message: "No file uploaded" } });
+
+      const fileData = req.file as any;
+      return res.json({
+        secure_url: fileData.secure_url,
+        duration: fileData.duration,
+        public_id: fileData.public_id
+      });"""
+
+content = content.replace(upload_route_old, upload_route_new)
+
+with open('server.ts', 'w') as f:
     f.write(content)
