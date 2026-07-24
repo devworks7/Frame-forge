@@ -385,12 +385,10 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
       // 2. Upload directly to Cloudinary or our backend
       const formData = new FormData();
       formData.append("file", file);
-      if (!isPdf) {
-        formData.append("api_key", signData.apiKey);
-        formData.append("timestamp", signData.timestamp.toString());
-        formData.append("signature", signData.signature);
-        formData.append("folder", signData.folder);
-      }
+      formData.append("api_key", signData.apiKey);
+      formData.append("timestamp", signData.timestamp.toString());
+      formData.append("signature", signData.signature);
+      formData.append("folder", signData.folder);
 
       const startTime = Date.now();
       let lastTime = startTime;
@@ -489,15 +487,12 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
         xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
 
-        const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
         const resourceType = isPdf ? "raw" : "auto";
-        const uploadUrl = isPdf ? "/api/upload" : `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
         
 
         xhr.open("POST", uploadUrl);
-        if (isPdf) {
-          xhr.setRequestHeader("Authorization", "Bearer " + token);
-        }
+
         xhr.send(formData);
       });
 

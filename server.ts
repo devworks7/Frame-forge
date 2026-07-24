@@ -7,7 +7,7 @@ import dbApi from './api/db.js';
 import notifyApi from './api/notify.js';
 import systemApi from './api/system.js';
 import cloudinarySignApi from './api/cloudinary-sign.js';
-import uploadApi from './api/upload.js';
+
 
 async function startServer() {
   const app = express();
@@ -28,8 +28,6 @@ async function startServer() {
         return await systemApi(req, res);
       } else if (pathname === '/api/notify-email' || pathname === '/api/notify') {
         return await notifyApi(req, res);
-      } else if (pathname === '/api/upload' || pathname === '/api/admin/upload') {
-        return await uploadApi(req, res);
       } else if (pathname.startsWith('/api/admin')) {
         return await adminApi(req, res);
       } else if (pathname.startsWith('/api/db')) {

@@ -17,26 +17,6 @@ export async function checkInitialSeed(): Promise<void> {
   return;
 }
 
-export async function uploadToCloudinary(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const token = localStorage.getItem("ff_admin_token");
-  
-  const res = await fetch("/api/admin/upload", {
-    method: "POST",
-    headers: token ? { "Authorization": `Bearer ${token}` } : {},
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || "Upload to Cloudinary failed");
-  }
-
-  const data = await res.json();
-  return data.url;
-}
 
 // ------------------------------------------
 // PORTFOLIO API

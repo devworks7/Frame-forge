@@ -17,7 +17,7 @@ function vercelApiPlugin() {
           req.query = Object.fromEntries(urlObj.searchParams.entries());
 
           // Parse body for POST/PUT if bodyParser is not disabled
-          if ((req.method === 'POST' || req.method === 'PUT') && pathname !== '/api/admin/upload' && pathname !== '/api/upload') {
+          if ((req.method === 'POST' || req.method === 'PUT')) {
             req.body = await new Promise((resolve) => {
               let bodyData = '';
               req.on('data', chunk => { bodyData += chunk; });
@@ -59,9 +59,7 @@ function vercelApiPlugin() {
 
           // Route file mapping
           let filePath = '';
-          if (pathname === '/api/admin/upload' || pathname === '/api/upload') {
-            filePath = './api/upload.ts';
-          } else if (pathname === '/api/health' || pathname === '/api/db-status' || pathname.startsWith('/api/stream-video/') || pathname.startsWith('/api/documents/')) {
+          if (pathname === '/api/health' || pathname === '/api/db-status' || pathname.startsWith('/api/stream-video/') || pathname.startsWith('/api/documents/')) {
             filePath = './api/system.ts';
           } else if (pathname === '/api/notify-email' || pathname === '/api/notify') {
             filePath = './api/notify.ts';
