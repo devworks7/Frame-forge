@@ -7,6 +7,7 @@ import dbApi from './api/db.js';
 import notifyApi from './api/notify.js';
 import systemApi from './api/system.js';
 import cloudinarySignApi from './api/cloudinary-sign.js';
+import blobUploadApi from './api/blob-upload.js';
 
 
 async function startServer() {
@@ -22,7 +23,9 @@ async function startServer() {
   const routeApi = async (req: any, res: any) => {
     const pathname = req.path;
     try {
-      if (pathname === '/api/cloudinary-sign') {
+      if (pathname === '/api/blob-upload') {
+        return await blobUploadApi(req, res);
+      } else if (pathname === '/api/cloudinary-sign') {
         return await cloudinarySignApi(req, res);
       } else if (pathname === '/api/health' || pathname === '/api/db-status' || pathname.startsWith('/api/stream-video/') || pathname.startsWith('/api/documents/')) {
         return await systemApi(req, res);

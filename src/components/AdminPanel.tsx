@@ -1,3 +1,4 @@
+import { upload } from '@vercel/blob/client';
 import ErrorBoundary from "./ErrorBoundary";
 import React, { useState, useEffect } from "react";
 import {
@@ -351,30 +352,6 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
     setUploadStats({ loaded: 0, total: 0, speed: 0, eta: 0 });
 
     try {
-      // 1. Get signed upload parameters from our backend
-      const signRes = await fetch("/api/cloudinary-sign", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-      if (!signRes.ok) {
-        throw new Error(`Failed to get upload signature (${signRes.status})`);
-      }
-      
-      const contentType = signRes.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Invalid non-JSON response from signature API");
-      }
-
-      const signData = await signRes.json();
-      
-      if (!signData || !signData.success || !signData.signature) {
-        throw new Error("Invalid signature data received");
-      }
-
-      setUploadStage("Uploading...");
-
       const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
       if (isPdf && file.size > 100 * 1024 * 1024) {
         setUploadError("PDF file exceeds 100 MB limit.");
@@ -382,121 +359,170 @@ export default function AdminPanel({ onClose, onLoginStateChange }: AdminPanelPr
         return;
       }
 
-      // 2. Upload directly to Cloudinary or our backend
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("api_key", signData.apiKey);
-      formData.append("timestamp", signData.timestamp.toString());
-      formData.append("signature", signData.signature);
-      formData.append("folder", signData.folder);
+      let signData: any = null;
 
+      if (!isPdf) {
+        // 1. Get signed upload parameters from our backend
+        const signRes = await fetch("/api/cloudinary-sign", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        if (!signRes.ok) {
+          throw new Error(`Failed to get upload signature (${signRes.status})`);
+        }
+              
+        const contentType = signRes.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Invalid non-JSON response from signature API");
+        }
+        
+        signData = await signRes.json();
+              
+        if (!signData || !signData.success || !signData.signature) {
+          throw new Error("Invalid signature data received");
+        }
+      }
+      
+      setUploadStage("Uploading...");
+
+      // 2. Upload directly to Cloudinary or our backend
       const startTime = Date.now();
       let lastTime = startTime;
       let lastLoaded = 0;
 
-      const xhr = new XMLHttpRequest();
-      
-      const uploadPromise = new Promise((resolve, reject) => {
-        xhr.upload.addEventListener("progress", (event) => {
-          if (event.lengthComputable) {
-            const percentComplete = Math.round((event.loaded / event.total) * 100);
-            
-            const currentTime = Date.now();
-            const timeDiff = (currentTime - lastTime) / 1000; // seconds
-            
-            if (timeDiff > 0.5) { // Update stats every 500ms
-              const bytesDiff = event.loaded - lastLoaded;
-              const speedBps = bytesDiff / timeDiff;
-              const bytesRemaining = event.total - event.loaded;
-              const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
-              
-              setUploadStats({
-                loaded: event.loaded,
-                total: event.total,
-                speed: speedBps,
-                eta: etaSeconds
-              });
-              
-              lastTime = currentTime;
-              lastLoaded = event.loaded;
-            }
-            
-            setUploadProgress(percentComplete);
+      if (isPdf) {
+        let currentAbortController = new AbortController();
+        const uploadPromise = new Promise(async (resolve, reject) => {
+          try {
+            setUploadStage("Uploading...");
+            const blob = await upload(file.name, file, {
+              access: 'public',
+              handleUploadUrl: '/api/blob-upload',
+              abortSignal: currentAbortController.signal,
+              onUploadProgress: (event) => {
+                const percentComplete = Math.round((event.loaded / event.total) * 100);
+                const currentTime = Date.now();
+                const timeDiff = (currentTime - lastTime) / 1000;
+                if (timeDiff > 0.5) {
+                  const bytesDiff = event.loaded - lastLoaded;
+                  const speedBps = bytesDiff / timeDiff;
+                  const bytesRemaining = event.total - event.loaded;
+                  const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
+                  setUploadStats({
+                    loaded: event.loaded,
+                    total: event.total,
+                    speed: speedBps,
+                    eta: etaSeconds
+                  });
+                  lastTime = currentTime;
+                  lastLoaded = event.loaded;
+                }
+                setUploadProgress(percentComplete);
+              }
+            });
+            setUploadStage("Publishing...");
+            setUploadedFileUrl(blob.url);
+            setUploadedFileName(file.name);
+            setUploadStage("Completed");
+            setUploadSuccessMsg("PDF uploaded to Vercel Blob successfully.");
+            setTimeout(() => setUploadSuccessMsg(null), 3000);
+            resolve(blob);
+          } catch (err: any) {
+             if (err.name === "AbortError") {
+                 reject(new Error("Upload aborted"));
+             } else {
+                 reject(err);
+             }
           }
         });
+        await uploadPromise;
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", signData.apiKey);
+        formData.append("timestamp", signData.timestamp.toString());
+        formData.append("signature", signData.signature);
+        formData.append("folder", signData.folder);
 
-        xhr.addEventListener("load", async () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-               const d = JSON.parse(xhr.responseText);
-               setUploadStage("Processing...");
-               
-               // Verification logic
-               if (!d.secure_url) throw new Error("No secure URL returned");
-               
-               setUploadStage("Optimizing...");
-               
-               // Wait a brief moment to ensure Cloudinary has propagated the file (prevent broken streams)
-               await new Promise(r => setTimeout(r, 800));
-               
-               setUploadStage("Publishing...");
-               
-               // Attempt to HEAD request the url to verify it's active
-               try {
-                 const checkRes = await fetch(d.secure_url, { method: "HEAD" });
-               } catch (e) {
-                 // Ignore cross-origin HEAD errors if any
-               }
-
-               const isVideo = file.type.startsWith("video/");
-               const thumbnailUrl = isVideo && d.secure_url ? d.secure_url.replace(/\.[^/.]+$/, ".jpg") : d.secure_url;
-               
-               setUploadedFileUrl(d.secure_url);
-               setUploadedFileName(file.name);
-               
-               // Automatically generate thumbnail for projects if editing
-               if (editingProject) {
-                 setEditingProject(prev => prev ? { ...prev, thumbnail: thumbnailUrl, duration: d.duration ? String(Math.round(d.duration)) + "s" : prev.duration } : null);
-               }
-               
-               setUploadStage("Completed");
-               setUploadSuccessMsg("Media optimized and ready.");
-               setTimeout(() => setUploadSuccessMsg(null), 3000);
-               resolve(d);
-            } catch (err: any) {
-               reject(new Error("Failed to parse upload response: " + err.message));
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`;
+        const xhr = new XMLHttpRequest();
+        
+        const uploadPromise = new Promise((resolve, reject) => {
+          xhr.upload.addEventListener("progress", (event) => {
+            if (event.lengthComputable) {
+              const percentComplete = Math.round((event.loaded / event.total) * 100);
+              const currentTime = Date.now();
+              const timeDiff = (currentTime - lastTime) / 1000;
+              if (timeDiff > 0.5) {
+                const bytesDiff = event.loaded - lastLoaded;
+                const speedBps = bytesDiff / timeDiff;
+                const bytesRemaining = event.total - event.loaded;
+                const etaSeconds = speedBps > 0 ? bytesRemaining / speedBps : 0;
+                setUploadStats({
+                  loaded: event.loaded,
+                  total: event.total,
+                  speed: speedBps,
+                  eta: etaSeconds
+                });
+                lastTime = currentTime;
+                lastLoaded = event.loaded;
+              }
+              setUploadProgress(percentComplete);
             }
-          } else {
-            let errorMsg = `Cloudinary upload failed with status ${xhr.status}`;
-            try {
-              const errRes = JSON.parse(xhr.responseText);
-              if (errRes.error && errRes.error.message) {
-                errorMsg = `Cloudinary upload failed: ${errRes.error.message}`;
-              } else {
+          });
+
+          xhr.addEventListener("load", async () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                 const d = JSON.parse(xhr.responseText);
+                 setUploadStage("Processing...");
+                 if (!d.secure_url) throw new Error("No secure URL returned");
+                 setUploadStage("Optimizing...");
+                 await new Promise(r => setTimeout(r, 800));
+                 setUploadStage("Publishing...");
+                 try {
+                   const checkRes = await fetch(d.secure_url, { method: "HEAD" });
+                 } catch (e) {}
+                 const isVideo = file.type.startsWith("video/");
+                 const thumbnailUrl = isVideo && d.secure_url ? d.secure_url.replace(/\.[^/.]+$/, ".jpg") : d.secure_url;
+                 setUploadedFileUrl(d.secure_url);
+                 setUploadedFileName(file.name);
+                 if (editingProject) {
+                   setEditingProject(prev => prev ? { ...prev, thumbnail: thumbnailUrl, duration: d.duration ? String(Math.round(d.duration)) + "s" : prev.duration } : null);
+                 }
+                 setUploadStage("Completed");
+                 setUploadSuccessMsg("Media optimized and ready.");
+                 setTimeout(() => setUploadSuccessMsg(null), 3000);
+                 resolve(d);
+              } catch (err: any) {
+                 reject(new Error("Failed to parse upload response: " + err.message));
+              }
+            } else {
+              let errorMsg = `Cloudinary upload failed with status ${xhr.status}`;
+              try {
+                const errRes = JSON.parse(xhr.responseText);
+                if (errRes.error && errRes.error.message) {
+                  errorMsg = `Cloudinary upload failed: ${errRes.error.message}`;
+                } else {
+                  errorMsg = `Cloudinary upload failed: ${xhr.responseText}`;
+                }
+              } catch(e) {
                 errorMsg = `Cloudinary upload failed: ${xhr.responseText}`;
               }
-            } catch(e) {
-              errorMsg = `Cloudinary upload failed: ${xhr.responseText}`;
+              if (xhr.status === 400 && errorMsg.includes("Invalid file type")) errorMsg = "Invalid file type";
+              if (xhr.status === 400 && errorMsg.includes("exceeds")) errorMsg = "File exceeds upload limit";
+              reject(new Error(errorMsg));
             }
-            if (xhr.status === 400 && errorMsg.includes("Invalid file type")) errorMsg = "Invalid file type";
-            if (xhr.status === 400 && errorMsg.includes("exceeds")) errorMsg = "File exceeds upload limit";
-            reject(new Error(errorMsg));
-          }
+          });
+          xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
+          xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
+          xhr.open("POST", uploadUrl);
+          xhr.send(formData);
         });
-
-        xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
-        xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
-
-        const resourceType = isPdf ? "raw" : "auto";
-        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`;
-        
-
-        xhr.open("POST", uploadUrl);
-
-        xhr.send(formData);
-      });
-
-      await uploadPromise;
+        await uploadPromise;
+      }
       
     } catch (err: any) {
       setUploadError(err.message || "An error occurred during upload.");
